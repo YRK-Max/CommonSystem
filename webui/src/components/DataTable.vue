@@ -4,16 +4,17 @@
         :columns="columns"
         :data="datasource"
     >
-      <template #edit="{ row }">
-            <el-button type="primary" size="small" link @click="handleEdit(row)">编辑</el-button>
-          </template>
+      <template #operation="{ row }">
+        <slot name="operation" v-bind="{row}"></slot>
+      </template>
       <template #pager>
         <vxe-pager
           v-show="showPager"
+          background
           :layouts="['Sizes', 'PrevJump', 'PrevPage', 'Number', 'NextPage', 'NextJump', 'FullJump', 'Total']"
           :current-page="tablePage.currentPage"
           :page-size="tablePage.pageSize"
-          :total="tablePage.total"
+          :total="total"
           @page-change="handlePageChange"
         >
         </vxe-pager>
@@ -28,7 +29,6 @@ export default defineComponent({
   // eslint-disable-next-line no-unused-vars
   setup(props, context) {
     const tablePage = reactive({
-      total: 0,
       currentPage: 1,
       pageSize: 10
     })
@@ -46,6 +46,25 @@ export default defineComponent({
       rowConfig: {
         isHover: true,
         isCurrent: true
+      },
+      printConfig: {},
+      toolbarConfig: {
+        refresh: false,
+        import: true,
+        export: true,
+        print: false,
+        zoom: true,
+        custom: true
+      },
+      importConfig: {
+        remote: true,
+        types: ['xlsx', 'csv', 'xls'],
+        modes: ['insert'],
+        // 自定义服务端导入
+        importMethod({ file }) {
+          const formBody = new FormData()
+          formBody.append('file', file)
+        }
       }
     })
 
@@ -53,15 +72,10 @@ export default defineComponent({
 
     }
 
-    function handleEdit(row) {
-      context.emit('row-edit', row)
-    }
-
     return {
       tablePage,
       gridOptions,
-      handlePageChange,
-      handleEdit
+      handlePageChange
     }
   }
 })

@@ -1,8 +1,8 @@
 <template>
-  <div class="p-2 enter-y h-full">
-    <el-row class="h-full" :gutter="10">
-      <el-col :span="5">
-        <el-card class="h-full">
+  <div class="p-2 h-full overflow-hidden">
+    <el-row class="h-full enter-y" :gutter="6">
+      <el-col :span="4">
+        <el-card header="部门" class="h-full">
             <el-input v-model="filterText" placeholder="部门筛选">
               <template #prepend>
                 <y-icon icon="yiconfenxiang" />
@@ -20,121 +20,120 @@
             />
         </el-card>
       </el-col>
-      <el-col :span="19">
-        <el-form :inline="true" class="mt-2">
-          <el-form-item label="用户名称">
-            <el-input v-model="queryParams.userName" />
-          </el-form-item>
-          <el-form-item label="电话号码">
-            <el-input v-model="queryParams.phonenumber" />
-          </el-form-item>
-          <el-form-item>
-            <el-button
-              color="#426cb9"
-              @click="handleQuery"
-            >
-              <template #icon>
-                <y-icon icon="yiconfenxiang" :size="15" />
+      <el-col :span="20">
+        <el-card class="h-full">
+          <template #header>
+              <div class="flex justify-between">
+                  <h1>用户列表</h1>
+                  <div>
+                      <el-button size="small" type="primary" color="#426cb9" @click="handleAddUserShow">
+                          <template #icon>
+                              <YIcon icon="yiconjia" size="12" />
+                          </template>
+                          添加
+                      </el-button>
+                      <el-button size="small" type="primary" color="#c12c1f" @click="handleDelUser">
+                          <template #icon>
+                              <YIcon icon="yiconlajitong" size="13" />
+                          </template>
+                          删除
+                      </el-button>
+                  </div>
+              </div>
+          </template>
+          <el-form :inline="true" size="middle">
+            <el-form-item label="用户名称">
+              <el-input v-model="queryParams.userName" />
+            </el-form-item>
+            <el-form-item label="电话号码">
+              <el-input v-model="queryParams.phonenumber" />
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                color="#426cb9"
+                @click="handleQuery"
+              >
+                <template #icon>
+                  <y-icon icon="yiconfenxiang" :size="15" />
+                </template>
+                查询
+              </el-button>
+            </el-form-item>
+          </el-form>
+          <el-table
+            class="tableClass"
+            :data="datasource"
+            @selection-change="handleSelectionChange"
+          >
+            <el-table-column type="selection" width="55" />
+            <el-table-column prop="userId" label="用户 ID" show-overflow-tooltip />
+            <el-table-column prop="userName" label="用户名称" show-overflow-tooltip />
+            <el-table-column prop="nickName" label="用户昵称" show-overflow-tooltip />
+            <el-table-column prop="deptName" label="所属部门" show-overflow-tooltip>
+              <template #default="scope">
+                <label>{{ scope.row.dept.deptName }}</label>
               </template>
-              查询
-            </el-button>
-          </el-form-item>
-        </el-form>
-        <div class="mb-3">
-          <el-button
-            plain
-            color="#426cb9"
-            @click="handleAddUserShow"
-          >
-            <template #icon>
-              <y-icon icon="yiconjia" :size="15" />
-            </template>
-            新增
-          </el-button>
-          <el-button
-            plain
-            color="#F65A83"
-            @click="handleDelUser"
-          >
-            <template #icon>
-              <y-icon icon="yiconlajitong" />
-            </template>
-            批量删除
-          </el-button>
-        </div>
-        <el-table
-          class="tableClass"
-          :data="datasource"
-          @selection-change="handleSelectionChange"
-        >
-          <el-table-column type="selection" width="55" />
-          <el-table-column prop="userId" label="用户 ID" show-overflow-tooltip />
-          <el-table-column prop="userName" label="用户名称" show-overflow-tooltip />
-          <el-table-column prop="nickName" label="用户昵称" show-overflow-tooltip />
-          <el-table-column prop="deptName" label="所属部门" show-overflow-tooltip>
-            <template #default="scope">
-              <label>{{ scope.row.dept.deptName }}</label>
-            </template>
-          </el-table-column>
-          <el-table-column prop="phonenumber" label="手机号" show-overflow-tooltip />
-          <el-table-column prop="email" label="邮箱" show-overflow-tooltip />
-          <el-table-column fixed="right" label="操作" width="220">
-            <template #default="scope">
-              <el-button
-                v-if="!scope.row.admin"
-                link
-                type="primary"
-                @click="handleModifyUserShow(scope.row)"
-              >
-                <template #icon>
-                  <y-icon icon="yiconeditor" :size="12" />
-                </template>
-                修改
-              </el-button>
-              <el-button
-                v-if="!scope.row.admin"
-                link
-                type="primary"
-                @click="handleDelUser(scope.row)"
-              >
-                <template #icon>
-                  <y-icon icon="yiconlajitong" :size="12" />
-                </template>
-                删除
-              </el-button>
-              <el-dropdown
-                v-if="!scope.row.admin"
-                style="margin: 2px 0 2px 12px"
-              >
+            </el-table-column>
+            <el-table-column prop="phonenumber" label="手机号" show-overflow-tooltip />
+            <el-table-column prop="email" label="邮箱" show-overflow-tooltip />
+            <el-table-column fixed="right" label="操作" width="220">
+              <template #default="scope">
                 <el-button
+                  v-if="!scope.row.admin"
                   link
                   type="primary"
+                  @click="handleModifyUserShow(scope.row)"
                 >
                   <template #icon>
-                    <y-icon icon="yicongengduo" :size="12" />
+                    <y-icon icon="yiconeditor" :size="12" />
                   </template>
-                  更多
+                  修改
                 </el-button>
-                <template #dropdown>
-                  <el-dropdown-item @click="handleResetPwd(scope.row)">
-                    <y-icon icon="yiconquanxianyuechi" />
-                    重置密码
-                  </el-dropdown-item>
-                </template>
-              </el-dropdown>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-          class="mt-4 float-right"
-          small
-          background
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="dataTotal"
-          :page-sizes="[10, 20, 50, 100]"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentPageChange"
-        />
+                <el-button
+                  v-if="!scope.row.admin"
+                  link
+                  type="primary"
+                  @click="handleDelUser(scope.row)"
+                >
+                  <template #icon>
+                    <y-icon icon="yiconlajitong" :size="12" />
+                  </template>
+                  删除
+                </el-button>
+                <el-dropdown
+                  v-if="!scope.row.admin"
+                  style="margin: 2px 0 2px 12px"
+                >
+                  <el-button
+                    link
+                    type="primary"
+                  >
+                    <template #icon>
+                      <y-icon icon="yicongengduo" :size="12" />
+                    </template>
+                    更多
+                  </el-button>
+                  <template #dropdown>
+                    <el-dropdown-item @click="handleResetPwd(scope.row)">
+                      <y-icon icon="yiconquanxianyuechi" />
+                      重置密码
+                    </el-dropdown-item>
+                  </template>
+                </el-dropdown>
+              </template>
+            </el-table-column>
+          </el-table>
+          <el-pagination
+            class="mt-4 float-right"
+            small
+            background
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="dataTotal"
+            :page-sizes="[10, 20, 50, 100]"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentPageChange"
+          />
+        </el-card>
       </el-col>
     </el-row>
   </div>

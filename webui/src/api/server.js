@@ -21,6 +21,7 @@ export const updateUser = (user) => { return service.put('/system/user', user) }
 export const resetPwd = (user) => { return service.put('/system/user/resetPwd', user) }
 
 // role
+export const getRoleList = (params) => { return service.get('/system/role/list', { params: params }) }
 export const getRoleSelectOptions = () => { return service.get('/system/role/optionselect') }
 export const addRole = (role) => { return service.post('/system/role', role) }
 
