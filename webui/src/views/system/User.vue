@@ -28,7 +28,7 @@
                   <div>
                       <el-button size="small" type="primary" color="#426cb9" @click="handleAddUserShow">
                           <template #icon>
-                              <YIcon icon="yiconjia" size="12" />
+                              <YIcon icon="yiconjia" :size="12" />
                           </template>
                           添加
                       </el-button>

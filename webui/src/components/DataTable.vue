@@ -25,7 +25,7 @@
 import { defineComponent, reactive } from 'vue'
 
 export default defineComponent({
-  props: ['columns', 'datasource', 'total', 'loading', 'showPager'],
+  props: ['columns', 'datasource', 'total', 'loading', 'showPager', 'showToolbar'],
   // eslint-disable-next-line no-unused-vars
   setup(props, context) {
     const tablePage = reactive({
@@ -49,6 +49,7 @@ export default defineComponent({
       },
       printConfig: {},
       toolbarConfig: {
+        enabled: props.showToolbar || false,
         refresh: false,
         import: true,
         export: true,

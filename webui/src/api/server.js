@@ -24,6 +24,10 @@ export const resetPwd = (user) => { return service.put('/system/user/resetPwd', 
 export const getRoleList = (params) => { return service.get('/system/role/list', { params: params }) }
 export const getRoleSelectOptions = () => { return service.get('/system/role/optionselect') }
 export const addRole = (role) => { return service.post('/system/role', role) }
+export const updateRole = (role) => { return service.put('/system/role', role) }
+export const getRole = (roleId) => { return service.get('/system/role/' + roleId) }
+export const getRoleMenuTreeselect = (roleId) => { return service.get('/system/menu/roleMenuTreeselect/' + roleId) }
+export const delRole = (ids) => { return service.delete('/system/role/' + ids) }
 
 // dept 部门
 export const getDeptTreeList = () => { return service.get('/system/dept/treeselect') }
