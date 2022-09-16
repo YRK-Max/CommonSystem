@@ -20,8 +20,8 @@
           <el-radio label="F">按钮</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label="页面类型" prop="isFrame">
-        <el-radio-group v-model="form.isFrame" :disabled="isSubMenu">
+      <el-form-item v-if="form.menuType=='C'" label="页面类型" prop="isFrame">
+        <el-radio-group v-model="form.isFrame">
           <el-radio label="1">路由页面</el-radio>
           <el-radio label="0">外链页面</el-radio>
         </el-radio-group>
