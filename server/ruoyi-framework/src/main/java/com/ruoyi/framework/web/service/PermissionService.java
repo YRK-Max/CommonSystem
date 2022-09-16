@@ -160,6 +160,6 @@ public class PermissionService
      */
     private boolean hasPermissions(Set<String> permissions, String permission)
     {
-        return permissions.contains(ALL_PERMISSION) || permissions.contains(StringUtils.trim(permission));
+        return permissions.contains(ALL_PERMISSION) || permissions.contains(permission.split(":")[0] + ":" + permission.split(":")[1] + ":*") || permissions.contains(StringUtils.trim(permission));
     }
 }

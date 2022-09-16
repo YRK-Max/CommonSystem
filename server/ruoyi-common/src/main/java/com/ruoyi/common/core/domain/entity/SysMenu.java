@@ -63,6 +63,9 @@ public class SysMenu extends BaseEntity
     /** 菜单图标 */
     private String icon;
 
+    /** URL 地址 */
+    private String link;
+
     /** 子菜单 */
     private List<SysMenu> children = new ArrayList<SysMenu>();
 
@@ -218,6 +221,16 @@ public class SysMenu extends BaseEntity
         return icon;
     }
 
+    public String getLink()
+    {
+        return link;
+    }
+
+    public void setLink(String link)
+    {
+        this.link = link;
+    }
+
     public void setIcon(String icon)
     {
         this.icon = icon;
@@ -254,6 +267,7 @@ public class SysMenu extends BaseEntity
             .append("updateBy", getUpdateBy())
             .append("updateTime", getUpdateTime())
             .append("remark", getRemark())
+            .append("link", getLink())
             .toString();
     }
 }
