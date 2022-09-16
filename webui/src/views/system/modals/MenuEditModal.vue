@@ -3,6 +3,7 @@
     v-model="isShow"
     title="添加菜单"
     size="25%"
+    @closed="handleClosed"
   >
     <el-form
       ref="addMenuForm"
@@ -17,6 +18,12 @@
           <el-radio label="M">一级菜单</el-radio>
           <el-radio label="C">子菜单</el-radio>
           <el-radio label="F">按钮</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item label="页面类型" prop="isFrame">
+        <el-radio-group v-model="form.isFrame" :disabled="isSubMenu">
+          <el-radio label="1">路由页面</el-radio>
+          <el-radio label="0">外链页面</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item v-if="form.menuType != 'M'" label="上级菜单" prop="parentMenu">
@@ -39,7 +46,19 @@
       <el-form-item label="路由地址" prop="path">
         <el-input v-model="form.path"></el-input>
       </el-form-item>
-      <el-form-item label="路由组件" prop="component">
+      <el-form-item v-if="form.isFrame === '0' && !isEdit" label="外链类型">
+        <el-radio-group v-model="isReport" @change="handleIsReportChange">
+          <el-radio label="1">普通外链</el-radio>
+          <el-radio label="0">报表外链</el-radio>
+        </el-radio-group>
+      </el-form-item>
+      <el-form-item v-if="form.isFrame === '0' && isReport === '0'" label="报表名称">
+        <el-input v-model="reportName" @input="hanldeReportNameChange"></el-input>
+      </el-form-item>
+      <el-form-item v-if="form.isFrame === '0'" label="URL地址" prop="link">
+        <el-input v-model="form.link" :disabled="isReport === '0'" ></el-input>
+      </el-form-item>
+      <el-form-item v-if="form.isFrame === '1'" label="路由组件" prop="component">
         <el-input v-model="form.component"></el-input>
       </el-form-item>
       <el-form-item label="菜单图标" prop="icon">
@@ -113,6 +132,8 @@ export default defineComponent({
     const isShow = ref(false)
     const isEdit = ref(false)
     const isSubMenu = ref(false)
+    const reportName = ref('')
+    const isReport = ref('1')
     const form = reactive({
       menuId: parseInt(getUUIDNum()),
       menuType: 'M',
@@ -120,17 +141,20 @@ export default defineComponent({
       menuName: '',
       perms: '',
       path: '',
+      link: '',
       component: '',
       icon: '#',
       orderNum: 1,
       isCache: '0',
       visible: '0',
-      status: '0'
+      status: '0',
+      isFrame: '1'
     })
     const rules = reactive({
       menuName: [{ required: true, message: '菜单名不能为空', trigger: 'blur' }],
       path: [{ required: true, message: '路径不能为空', trigger: 'blur' }],
-      component: [{ required: true, message: '组件名不能为空', trigger: 'blur' }]
+      component: [{ required: true, message: '组件名不能为空', trigger: 'blur' }],
+      link: [{ required: true, message: 'Iframe页面URL不能为空', trigger: 'blur' }]
     })
     const menuTreeList = reactive([])
 
@@ -156,6 +180,8 @@ export default defineComponent({
         this.form.orderNum = menuInfo.orderNum
         this.form.visible = menuInfo.visible
         this.form.status = menuInfo.status
+        this.form.link = menuInfo.link
+        this.form.isFrame = menuInfo.isFrame
       }
 
       if (menuInfo && subMenu) {
@@ -182,6 +208,35 @@ export default defineComponent({
       })
     }
 
+    function resetForm() {
+      form.menuId = parseInt(getUUIDNum())
+      form.menuType = 'M'
+      form.parentId = undefined
+      form.menuName = undefined
+      form.perms = undefined
+      form.path = undefined
+      form.component = undefined
+      form.icon = '#'
+      form.orderNum = 1
+      form.visible = '0'
+      form.status = '0'
+      form.link = undefined
+      form.isFrame = '1'
+      isReport.value = '1'
+    }
+
+    function handleClosed() {
+      resetForm()
+    }
+
+    function hanldeReportNameChange(data) {
+      form.link = process.env.VUE_APP_RAQRPT_URL + '?rpx=' + data + '.rpx'
+    }
+
+    function handleIsReportChange(data) {
+      data === '0' ? form.component = 'modules/IframePageView' : form.component = ''
+    }
+
     return {
       css_prefix_text,
       glyphs,
@@ -192,10 +247,15 @@ export default defineComponent({
       isSubMenu,
       menuTreeList,
       rules,
+      reportName,
+      isReport,
       show,
       hide,
       submitForm,
-      handleSelectIcon
+      handleSelectIcon,
+      handleClosed,
+      hanldeReportNameChange,
+      handleIsReportChange
     }
   }
 })

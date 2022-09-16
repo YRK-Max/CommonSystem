@@ -29,7 +29,7 @@
 	</resultMap>
 
 	<sql id="selectMenuVo">
-        select menu_id, menu_name, parent_id, order_num, path, component, `query`, is_frame, is_cache, menu_type, visible, status, ifnull(perms,'') as perms, icon, create_time, update_time
+        select menu_id, menu_name, parent_id, order_num, path, link, component, `query`, is_frame, is_cache, menu_type, visible, status, ifnull(perms,'') as perms, icon, create_time, update_time
 		from sys_menu
     </sql>
     
@@ -133,6 +133,7 @@
 			<if test="parentId != null">parent_id = #{parentId},</if>
 			<if test="orderNum != null">order_num = #{orderNum},</if>
 			<if test="path != null and path != ''">path = #{path},</if>
+			<if test="link != null and link != ''">link = #{link},</if>
 			<if test="component != null">component = #{component},</if>
 			<if test="query != null">`query` = #{query},</if>
 			<if test="isFrame != null and isFrame != ''">is_frame = #{isFrame},</if>
@@ -156,6 +157,7 @@
 		<if test="menuName != null and menuName != ''">menu_name,</if>
 		<if test="orderNum != null">order_num,</if>
 		<if test="path != null and path != ''">path,</if>
+		<if test="link != null and link != ''">link,</if>
 		<if test="component != null and component != ''">component,</if>
 		<if test="query != null and query != ''">`query`,</if>
 		<if test="isFrame != null and isFrame != ''">is_frame,</if>
@@ -174,6 +176,7 @@
 		<if test="menuName != null and menuName != ''">#{menuName},</if>
 		<if test="orderNum != null">#{orderNum},</if>
 		<if test="path != null and path != ''">#{path},</if>
+		<if test="link != null and link != ''">#{link},</if>
 		<if test="component != null and component != ''">#{component},</if>
 		<if test="query != null and query != ''">#{query},</if>
 		<if test="isFrame != null and isFrame != ''">#{isFrame},</if>
