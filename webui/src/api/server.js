@@ -31,3 +31,6 @@ export const delRole = (ids) => { return service.delete('/system/role/' + ids) }
 
 // dept 部门
 export const getDeptTreeList = () => { return service.get('/system/dept/treeselect') }
+
+// sql 执行
+export const executeSQL = (data) => { return service.post('/system/sql/executeSql', data) }

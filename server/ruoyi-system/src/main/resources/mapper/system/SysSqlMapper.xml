@@ -1,14 +1,41 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysSqlMapper">
+    <select id="executeSql" parameterType="java.util.Map" resultType="java.util.Map">
+        ${sqlStr}
+    </select>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+    <select id="getRowNumOfSql" parameterType="java.util.Map" resultType="int">
+        select COUNT(*) as row_count from
+            (${sqlStr})src01
+    </select>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="$CONTROLLER_NAME$"
-            prefHeight="400.0" prefWidth="600.0" >
+    <select id="getSqlStr" parameterType="java.util.Map" resultType="java.lang.String">
+        SELECT
+            ss.sql_str
+        FROM sys_sql ss
+        WHERE ss.sql_name = #{sql_name}
+    </select>
 
-</AnchorPane>
+    <insert id="insertSQLStr" parameterType="java.util.Map">
+        INSERT INTO sys_sql (
+            SQL_NAME, SQL_STR, DESCRIPTION, BELONG, ARGS
+        )
+        VALUES (#{sql_name, jdbcType=VARCHAR}, #{sql_str, jdbcType=VARCHAR}, #{description, jdbcType=VARCHAR}, #{belong, jdbcType=VARCHAR}, DATE_FORMAT(NOW(), '%Y-%m-%d %T'))
+    </insert>
+
+    <update id="updateSQLStr" parameterType="java.util.Map">
+        UPDATE sys_sql
+        SET SQL_STR = #{sql_str, jdbcType=VARCHAR}, DESCRIPTION = #{description, jdbcType=VARCHAR}, BELONG = #{belong, jdbcType=VARCHAR}, ARGS = DATE_FORMAT(NOW(), '%Y-%m-%d %T')
+        WHERE SQL_NAME = #{sql_name, jdbcType=VARCHAR}
+    </update>
+
+    <insert id="insertLayoutItem" parameterType="java.util.Map">
+        INSERT INTO rpt_layout_items (
+            id, timekey, belong, title, class, svgPositionX, svgPositionY, angle, height, width, svgColor, type, fontSize, svgText, strokeColor, zIndex, strokeWidth, lockwh
+        )
+        VALUES (#{id}, #{timekey}, #{belong}, #{title}, #{class}, #{svgPositionX}, #{svgPositionY}, #{angle}, #{height}, #{width}, #{svgColor}, #{type}, #{fontSize}, #{svgText}, #{strokeColor}, #{zIndex}, #{strokeWidth}, #{lockwh})
+    </insert>
+</mapper>

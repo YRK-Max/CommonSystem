@@ -5,7 +5,16 @@
   >
     <el-row :gutter="8" class="enter-y">
       <el-col :lg="6" :sm="24" class="pb-2">
-        <InfoCard icon="yiconshebei" color="#426cb9" bgColor="#d1e1ff" title="设备运行状态"></InfoCard>
+        <InfoCard
+          icon="yiconshebei"
+          color="#426cb9"
+          bgColor="#d1e1ff"
+          title="在制产品信息"
+          label1="滞留数"
+          label2="在制总数"
+          :num1="cardInfos.card1.num1"
+          :num2="cardInfos.card1.num2"
+        ></InfoCard>
       </el-col>
       <el-col :lg="6" :sm="24" class="pb-2">
         <InfoCard icon="yicondowntime" color="#ff942e" bgColor="#ffead6" title="故障检测模型"></InfoCard>
@@ -57,78 +66,28 @@
         <MonacoEditor />
       </div>
     </div>
-    <Splitpanes
-      class="enter-y default-theme h-full"
-    >
-      <Pane>
-        <div class="chart-container card-class h-full w-full bg-light-100">
-          <div class="chart-container-header">
-            <div class="flex">
-              <h1>Github Clone趋势</h1>
-              <div class="ml-2 opacity-0" :class="{ 'message-class': responese.clone_flag, 'success-msg': responese.clone_flag }">已刷新</div>
-            </div>
-            <el-button circle>
-              <template #icon>
-                <YIcon icon="yiconshuaxin" @click="getClonesInfo" />
-              </template>
-            </el-button>
-          </div>
-          <div class="chart-container-content">
-            <LineChart />
-          </div>
-        </div>
-      </Pane>
-      <Pane>
-        <div class="chart-container card-class h-full w-full bg-light-100">
-          <div class="chart-container-header">
-            <div class="flex">
-              <h1>Github 访问趋势</h1>
-              <div class="ml-2 opacity-0" :class="{ 'message-class': responese.view_flag, 'success-msg': responese.view_flag }">已刷新</div>
-            </div>
-            <el-button circle>
-              <template #icon>
-                <YIcon icon="yiconshuaxin" @click="getViewsInfo" />
-              </template>
-            </el-button>
-          </div>
-          <div class="chart-container-content">
-            <LineChart />
-          </div>
-        </div>
-      </Pane>
-    </Splitpanes>
   </div>
 </template>
 
 <script>
-import { getTrafficClones, getTrafficViews } from '@/api/github'
 import LineChart from '@/components/charts/LineChart.vue'
 import ProgressCardList from '@/components/ProgressCardList'
-import YIcon from '@/components/YIcon.vue'
 import store from '@/store'
-import { getObjArrayFieldToArray } from '@/utils/utils'
 import { defineComponent, reactive } from '@vue/runtime-core'
-import { Pane, Splitpanes } from 'splitpanes'
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import DataTable from '../components/DataTable.vue'
 import InfoCard from '../components/InfoCard.vue'
 import BarChart from '@/components/charts/BarChart.vue'
+import { executeSQL } from '@/api/server'
 
 export default defineComponent({
   components: {
     LineChart,
     ProgressCardList,
-    YIcon,
-    Splitpanes,
-    Pane,
     MonacoEditor,
     DataTable,
     InfoCard,
     BarChart
-  },
-  created() {
-    this.getClonesInfo()
-    this.getViewsInfo()
   },
   computed: {
     isMobile() { return store.state.app.device === 'mobile' }
@@ -168,56 +127,28 @@ export default defineComponent({
       { field: 'address', title: 'Address', showOverflow: true }
     ]
 
-    function getClonesInfo() {
-      responese.clone_flag = false
-      getTrafficClones().then(res => {
-        const clones = res['clones']
-        const series = []
-        chartOfClones.legend = ['clones', 'uniques']
-        chartOfClones.xAixs = getObjArrayFieldToArray(clones, 'timestamp')
-        series.push({
-          name: 'clones',
-          type: 'line',
-          data: getObjArrayFieldToArray(clones, 'count')
-        })
-        series.push({
-          name: 'uniques',
-          type: 'line',
-          data: getObjArrayFieldToArray(clones, 'uniques')
-        })
-        chartOfClones.series = series
-        responese.clone_flag = true
-      })
-    }
-    function getViewsInfo() {
-      responese.view_flag = false
-      getTrafficViews().then(res => {
-        const views = res['views']
-        const series = []
-        chartOfViews.legend = ['views', 'uniques']
-        chartOfViews.xAixs = getObjArrayFieldToArray(views, 'timestamp')
-        series.push({
-          name: 'views',
-          type: 'line',
-          data: getObjArrayFieldToArray(views, 'count')
-        })
-        series.push({
-          name: 'uniques',
-          type: 'line',
-          data: getObjArrayFieldToArray(views, 'uniques')
-        })
-        chartOfViews.series = series
-        responese.view_flag = true
-      })
-    }
+    const cardInfos = reactive({
+      card1: {
+        num1: 0,
+        num2: 0
+      }
+    })
+
+    executeSQL({ sql_name: 'getWIPAsisCount' }).then(res => {
+      if (res && res['code'] === 200) {
+        const result = res['data'][0]
+        cardInfos.card1.num1 = result['delay_count']
+        cardInfos.card1.num2 = result['total_count']
+      }
+    })
+
     return {
       chartOfClones,
       chartOfViews,
       responese,
       datasource,
       columns,
-      getClonesInfo,
-      getViewsInfo
+      cardInfos
     }
   }
 })

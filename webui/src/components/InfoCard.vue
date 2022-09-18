@@ -14,8 +14,8 @@
                     <el-row class="mt-2 text-center">
                         <el-col class="flex justify-center" :span="8">
                             <div>
-                                <div>251</div>
-                                <div>运行中</div>
+                                <div>{{ num1 || 0 }}</div>
+                                <div>{{ label1 }}</div>
                             </div>
                         </el-col>
                         <el-col class="h-10" :span="2">
@@ -23,8 +23,8 @@
                         </el-col>
                         <el-col class="flex justify-center" :span="8">
                             <div>
-                                <div>251</div>
-                                <div>Total</div>
+                                <div>{{ num2 || 0 }}</div>
+                                <div>{{ label2 }}</div>
                             </div>
                         </el-col>
                     </el-row>
@@ -40,7 +40,7 @@ export default defineComponent({
   components: {
     YIcon
   },
-  props: ['icon', 'color', 'bgColor', 'title'],
+  props: ['icon', 'color', 'bgColor', 'title', 'num1', 'num2', 'label1', 'label2'],
   setup() {
 
   }
