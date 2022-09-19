@@ -17,19 +17,46 @@
         ></InfoCard>
       </el-col>
       <el-col :lg="6" :sm="24" class="pb-2">
-        <InfoCard icon="yicondowntime" color="#ff942e" bgColor="#ffead6" title="故障检测模型"></InfoCard>
+        <InfoCard
+          icon="yicondowntime"
+          color="#ff942e"
+          bgColor="#ffead6"
+          title="出货数量"
+          label1="今日出货数"
+          label2="月出货总数"
+          :num1="cardInfos.card2.num1"
+          :num2="cardInfos.card2.num2"
+        ></InfoCard>
       </el-col>
       <el-col :lg="6" :sm="24" class="pb-2">
-        <InfoCard icon="yiconjihua" color="#4f3ff0" bgColor="#d1ccff" title="故障检测数量"></InfoCard>
+        <InfoCard
+          icon="yiconjihua"
+          color="#4f3ff0"
+          bgColor="#d1ccff"
+          title="良率"
+          label1="今日良率"
+          label2="月良率"
+          :num1="cardInfos.card2.num1 + '%'"
+          :num2="cardInfos.card2.num2 + '%'"
+        ></InfoCard>
       </el-col>
       <el-col :lg="6" :sm="24" class="pb-2">
-        <InfoCard icon="yiconB1" color="#c12c1f" bgColor="#ffd0cc" title="设备报警数量"></InfoCard>
+        <InfoCard
+          icon="yiconB1"
+          color="#c12c1f"
+          bgColor="#ffd0cc"
+          title="设备报警数量"
+          label1="今日报警数"
+          label2="月报警总数"
+          :num1="cardInfos.card4.num1"
+          :num2="cardInfos.card4.num2"
+        ></InfoCard>
       </el-col>
     </el-row>
     <el-row class="enter-y" :gutter="6">
       <el-col :lg="8" :sm="24">
-        <el-card header="实时异常检测" class="mb-2" :body-style="{padding: '10px', height: '350px' }">
-          <BarChart />
+        <el-card header="分时产能" class="mb-2" :body-style="{padding: '10px', height: '350px' }">
+          <BarChart :xAxis="chartData.chart1.xAixs" :series="chartData.chart1.series" />
         </el-card>
       </el-col>
       <el-col :lg="8" :sm="24">
@@ -42,8 +69,8 @@
         </el-card>
       </el-col>
       <el-col :lg="8" :sm="24">
-        <el-card header="每月异常检测总数" class="mb-2" :body-style="{padding: '10px', height: '350px' }">
-          <LineChart />
+        <el-card header="月[出货/不良品]趋势" class="mb-2" :body-style="{padding: '10px', height: '350px' }">
+          <LineChart :xAxis="chartData.chart2.xAixs" :series="chartData.chart2.series" />
         </el-card>
       </el-col>
     </el-row>
@@ -52,19 +79,43 @@
       style="display: flex; height: 460px; "
     >
       <el-row
-        class="h-full enter-y little-component-class"
+        class="h-full w-full enter-y little-component-class"
         :gutter="6"
       >
         <el-col
-          :span="24"
+          :span="12"
           class="h-full"
         >
           <ProgressCardList/>
         </el-col>
+        <el-col class="h-full" :span="12">
+          <el-card class="h-full">
+            <div style="height: 30px; margin: 5px; width: 100%; display: flex; ">
+              <div style="display: flex; justify-content: center; align-items: center; margin-left: 10px;">
+                <div style="background: #94ec8a; border-radius: 5px; height: 15px; width: 20px; margin-right: 5px" />
+                <label style="font-weight: bold">RUN</label>
+              </div>
+              <div style="display: flex; justify-content: center; align-items: center; margin-left: 10px;">
+                <div style="background: #FFD700; border-radius: 5px; height: 15px; width: 20px; margin-right: 5px" />
+                <label style="font-weight: bold">IDLE</label>
+              </div>
+              <div style="display: flex; justify-content: center; align-items: center; margin-left: 10px;">
+                <div style="background: #4889fc; border-radius: 5px; height: 15px; width: 20px; margin-right: 5px" />
+                <label style="font-weight: bold">PM</label>
+              </div>
+              <div style="display: flex; justify-content: center; align-items: center; margin-left: 10px;">
+                <div style="background: #9e3da5; border-radius: 5px; height: 15px; width: 20px; margin-right: 5px" />
+                <label style="font-weight: bold">STOP</label>
+              </div>
+              <div style="display: flex; justify-content: center; align-items: center; margin-left: 10px;">
+                <div style="background: #ff5e5e; border-radius: 5px; height: 15px; width: 20px; margin-right: 5px" />
+                <label style="font-weight: bold">TROUBLE</label>
+              </div>
+            </div>
+            <SvgLayout layoutName="LAYOUT_1" />
+          </el-card>
+        </el-col>
       </el-row>
-      <div v-if="!isMobile" class="w-240 h-full ml-2">
-        <MonacoEditor />
-      </div>
     </div>
   </div>
 </template>
@@ -74,20 +125,21 @@ import LineChart from '@/components/charts/LineChart.vue'
 import ProgressCardList from '@/components/ProgressCardList'
 import store from '@/store'
 import { defineComponent, reactive } from '@vue/runtime-core'
-import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import DataTable from '../components/DataTable.vue'
 import InfoCard from '../components/InfoCard.vue'
 import BarChart from '@/components/charts/BarChart.vue'
 import { executeSQL } from '@/api/server'
+import SvgLayout from '@/components/SvgLayout.vue'
+import { ElNotification } from 'element-plus'
 
 export default defineComponent({
   components: {
     LineChart,
     ProgressCardList,
-    MonacoEditor,
     DataTable,
     InfoCard,
-    BarChart
+    BarChart,
+    SvgLayout
   },
   computed: {
     isMobile() { return store.state.app.device === 'mobile' }
@@ -107,30 +159,76 @@ export default defineComponent({
       clone_flag: false,
       view_flag: false
     })
-    const datasource = [
-      { id: 10001, name: 'Test1', nickname: 'T1', role: 'Develop', sex: '1', age: 28, address: 'Shenzhen' },
-      { id: 10002, name: 'Test2', nickname: 'T2', role: 'Test', sex: '0', age: 22, address: 'Guangzhou' },
-      { id: 10003, name: 'Test3', nickname: 'T3', role: 'PM', sex: '1', age: 32, address: 'Shanghai' },
-      { id: 10004, name: 'Test4', nickname: 'T4', role: 'Designer', sex: '0', age: 23, address: 'Shenzhen' },
-      { id: 10005, name: 'Test5', nickname: 'T5', role: 'Develop', sex: '0', age: 30, address: 'Shanghai' },
-      { id: 10006, name: 'Test6', nickname: 'T6', role: 'Develop', sex: '0', age: 27, address: 'Shanghai' },
-      { id: 10007, name: 'Test7', nickname: 'T7', role: 'Develop', sex: '1', age: 29, address: 'Shenzhen' },
-      { id: 10008, name: 'Test8', nickname: 'T8', role: 'Develop', sex: '0', age: 32, address: 'Shanghai' },
-      { id: 10009, name: 'Test9', nickname: 'T9', role: 'Develop', sex: '1', age: 30, address: 'Shenzhen' },
-      { id: 10010, name: 'Test10', nickname: 'T10', role: 'Develop', sex: '0', age: 34, address: 'Shanghai' }
-    ]
+    const datasource = []
     const columns = [
-      { type: 'seq', width: 40 },
-      { field: 'name', title: 'Name', sortable: true, filterMultiple: true },
-      { field: 'nickname', title: 'Nickname' },
-      { field: 'role', title: 'Role', showOverflow: true, showHeaderOverflow: true },
-      { field: 'address', title: 'Address', showOverflow: true }
+      { type: 'alarm 代码', width: 40 },
+      { field: 'alarm 描述', title: 'Name', sortable: true, filterMultiple: true },
+      { field: '严重级别', title: 'Nickname' },
+      { field: '发生时间', title: 'Role', showOverflow: true, showHeaderOverflow: true },
+      { field: '状态', title: 'Address', showOverflow: true }
     ]
 
     const cardInfos = reactive({
       card1: {
         num1: 0,
         num2: 0
+      },
+      card2: {
+        num1: 0,
+        num2: 0
+      },
+      card4: {
+        num1: 0,
+        num2: 0
+      }
+    })
+
+    const labelOption = {
+      show: true,
+      rotate: 90,
+      align: 'left',
+      verticalAlign: 'middle',
+      position: 'insideBottom',
+      distance: 15,
+      formatter: '{c}',
+      fontSize: 11,
+      rich: {
+        name: {}
+      }
+    }
+
+    const chartData = reactive({
+      chart1: {
+        xAixs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24],
+        series: [
+          {
+            name: '分时产能',
+            data: [150, 230, 224, 218, 135, 147, 260, 450, 365, 440, 510, 12, 350, 450, 432, 478, 512, 487, 24],
+            type: 'bar',
+            barMaxWidth: 20,
+            label: labelOption,
+            itemStyle: {
+              normal: {
+                barBorderRadius: [8, 8, 0, 0]
+              }
+            }
+          }
+        ]
+      },
+      chart2: {
+        xAixs: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31],
+        series: [
+          {
+            name: '出货数量',
+            data: [150, 230, 224, 218, 135, 147, 260, 450, 365, 440, 510, 420, 350, 450, 432, 478, 512, 487, 389],
+            type: 'line'
+          },
+          {
+            name: '不良品数量',
+            data: [12, 18, 25, 35, 47, 46, 42, 36, 53, 61, 58, 53, 51, 49, 45, 41, 35, 36, 56],
+            type: 'line'
+          }
+        ]
       }
     })
 
@@ -142,13 +240,42 @@ export default defineComponent({
       }
     })
 
+    executeSQL({ sql_name: 'getRtmAlarmCount' }).then(r => {
+      if (r && r['code'] === 200) {
+        cardInfos.card4.num1 = r['data'][0]['TODAYCOUNT']
+        cardInfos.card4.num1 = r['data'][0]['MONTHCOUNT']
+        // that.alarm_info.s_count = r['result'][0]['SCOUNT']
+        // that.alarm_info.w_count = r['result'][0]['WCOUNT']
+        // that.alarm_info.l_count = r['result'][0]['LCOUNT']
+      } else {
+        ElNotification.error({
+          message: '获取设备状态失败',
+          description: r['msg']
+        })
+      }
+    })
+
+    executeSQL({ sql_name: 'getDayMonthShipCount' }).then((res) => {
+      if (res && res['code'] === 200) {
+        const ship_infos = res['data'][0]
+        cardInfos.card2.num1 = parseInt(ship_infos['month_ship_count'])
+        cardInfos.card2.num2 = parseInt(ship_infos['today_ship_count'])
+      } else {
+        ElNotification.error({
+          message: '获取数据失败',
+          description: res['msg']
+        })
+      }
+    })
+
     return {
       chartOfClones,
       chartOfViews,
       responese,
       datasource,
       columns,
-      cardInfos
+      cardInfos,
+      chartData
     }
   }
 })

@@ -11,6 +11,7 @@
     "@vueuse/core": "^7.7.1",
     "axios": "^0.26.1",
     "core-js": "^3.8.3",
+    "d3": "^7.6.1",
     "echarts": "^5.3.1",
     "element-plus": "^2.2.16",
     "element-resize-detector": "^1.2.4",

@@ -12,23 +12,18 @@ import { uuid } from 'vue-uuid'
 
 export default defineComponent({
   props: {
-    xAxis: {
-      type: Array,
-      default: () => { return ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] }
+    name: {
+      type: String,
+      default: () => { return 'Pie Name' }
     },
-    legend: {
-      type: Array,
-      default: () => { return ['clones'] }
-    },
-    series: {
+    data: {
       type: Array,
       default: () => {
         return [
-          {
-            name: 'clones',
-            data: [150, 230, 224, 218, 135, 147, 260],
-            type: 'line'
-          }
+          { value: 1048, name: 'Baidu' },
+          { value: 335, name: 'Direct' },
+          { value: 310, name: 'Email' },
+          { value: 251, name: 'Google' }
         ]
       }
     }
@@ -38,7 +33,7 @@ export default defineComponent({
     this.initChart()
   },
   watch: {
-    series: {
+    data: {
       handler() {
         this.initChart()
       },
@@ -51,39 +46,60 @@ export default defineComponent({
 
     async function initChart() {
       const option = {
-        grid: {
-          show: true,
-          top: '12%',
-          left: '5%',
-          right: '3%',
-          bottom: '10%'
-        },
-        toolbox: {
-          show: true,
-          feature: {
-            dataZoom: {
-              yAxisIndex: 'none'
-            },
-            dataView: { readOnly: false },
-            magicType: { type: ['line', 'bar'] },
-            restore: {}
-          }
-        },
         tooltip: {
-          trigger: 'axis'
+          trigger: 'item'
         },
         legend: {
-          data: props.legend,
-          left: '3%'
+          top: '1%',
+          width: '70%',
+          type: 'scroll',
+          left: 'left'
         },
-        xAxis: {
-          type: 'category',
-          data: props.xAxis
-        },
-        yAxis: {
-          type: 'value'
-        },
-        series: props.series
+        top: '15%',
+        series: [
+          {
+            name: props.name,
+            type: 'pie',
+            radius: ['40%', '70%'],
+            labelLine: {
+              length: 30
+            },
+            label: {
+              formatter: '{a|{a}}{abg|}\n{hr|}\n  {b|{b}：}{c}  {per|{d}%}  ',
+              backgroundColor: '#F6F8FC',
+              borderColor: '#8C8D8E',
+              borderWidth: 1,
+              borderRadius: 4,
+              alignTo: 'labelLine',
+              rich: {
+                a: {
+                  color: '#6E7079',
+                  lineHeight: 22,
+                  align: 'center'
+                },
+                hr: {
+                  borderColor: '#8C8D8E',
+                  width: '100%',
+                  borderWidth: 1,
+                  height: 0
+                },
+                b: {
+                  color: '#4C5058',
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                  lineHeight: 33
+                },
+                per: {
+                  color: '#fff',
+                  backgroundColor: '#4C5058',
+                  padding: [3, 4],
+                  borderRadius: 4
+                }
+              }
+            },
+            data: props.data
+          }
+        ]
       }
       await nextTick()
       this.chart.setOption(option)

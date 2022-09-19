@@ -18,6 +18,9 @@ public class SysSqlService implements ISysSqlService {
     @Autowired
     SysSqlMapper commonReportMapper;
 
+    @Value("${path.layout}")
+    private String FilePath;
+
     @Override
     public List<Map<?, ?>> executeSql(Map<String, String> map) {
         String sql_name = map.get("sql_name");
@@ -137,5 +140,22 @@ public class SysSqlService implements ISysSqlService {
     @Override
     public int updateSQLStr(Map map) {
         return commonReportMapper.updateSQLStr(map);
+    }
+
+    @Override
+    public String readLayoutFile(String layout_name) throws IOException {
+
+        String s = "";
+        File file = new File(FilePath + "\\layout_" + layout_name + ".txt");
+        if(!file.exists()) {
+            return "Error";
+        }
+        InputStreamReader in = new InputStreamReader(new FileInputStream(file),"UTF-8");
+        BufferedReader br = new BufferedReader(in);
+        StringBuilder content = new StringBuilder();
+        while ((s=br.readLine())!=null){
+            content.append(s);
+        }
+        return content.toString();
     }
 }

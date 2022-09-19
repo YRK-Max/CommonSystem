@@ -66,13 +66,18 @@ export default defineComponent({
         })
     }
 
+    function handleChangePwd() {
+      console.log('暂未实现')
+    }
+
     return {
       avatarUrl,
       username,
       authTypeColor,
       authTypeIcon,
       isThirdLogin,
-      handleLogout
+      handleLogout,
+      handleChangePwd
     }
   }
 })

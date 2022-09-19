@@ -34,3 +34,4 @@ export const getDeptTreeList = () => { return service.get('/system/dept/treesele
 
 // sql 执行
 export const executeSQL = (data) => { return service.post('/system/sql/executeSql', data) }
+export const getLayout = (data) => { return service.post('/system/sql/getLayout', data) }

@@ -129,3 +129,5 @@ xss:
   excludes: /system/notice
   # 匹配链接
   urlPatterns: /system/*,/monitor/*,/tool/*
+path:
+  layout: D:\\WorkSpace\\Codes\\BAG28-Report\\layouts

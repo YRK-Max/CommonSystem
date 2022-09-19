@@ -15,4 +15,5 @@ public interface ISysSqlService {
     byte[] getReportFile(String report_path) throws IOException;
     int insertSQLStr(Map map);
     int updateSQLStr(Map map);
+    String readLayoutFile(String layout_name) throws IOException;
 }

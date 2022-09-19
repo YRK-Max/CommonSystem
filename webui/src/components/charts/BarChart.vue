@@ -30,17 +30,6 @@ export default defineComponent({
                 barBorderRadius: [8, 8, 0, 0]
               }
             }
-          },
-          {
-            name: 'clone2',
-            data: [234, 420, 152, 248, 456, 263, 352],
-            type: 'bar',
-            barMaxWidth: 20,
-            itemStyle: {
-              normal: {
-                barBorderRadius: [8, 8, 0, 0]
-              }
-            }
           }
         ]
       }
@@ -69,7 +58,7 @@ export default defineComponent({
           top: '12%',
           left: '5%',
           right: '3%',
-          bottom: '10%'
+          bottom: '15%'
         },
         toolbox: {
           show: true,
@@ -90,7 +79,15 @@ export default defineComponent({
         },
         xAxis: {
           type: 'category',
-          data: props.xAxis
+          data: props.xAxis,
+          axisLabel: {
+            // interval: this.axisLabelInterval,
+            rotate: 45,
+            textStyle: {
+              color: '#666666'
+            },
+            margin: 10
+          }
         },
         yAxis: {
           type: 'value'

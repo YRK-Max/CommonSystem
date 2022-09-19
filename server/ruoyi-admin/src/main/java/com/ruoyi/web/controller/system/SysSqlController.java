@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -21,5 +22,14 @@ public class SysSqlController {
     @PostMapping("/executeSql")
     public AjaxResult executeSql(@RequestBody Map<String, String> map) {
         return AjaxResult.success(sysSqlService.executeSql(map));
+    }
+
+    @PostMapping("/getLayout")
+    public AjaxResult getLayout(@RequestBody Map<?, ?> map) throws IOException {
+        String str = sysSqlService.readLayoutFile(map.get("layout_name").toString());
+        if(str.equals("Error")){
+            return AjaxResult.error("文件不存在");
+        }
+        return AjaxResult.success(str);
     }
 }

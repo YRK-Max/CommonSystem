@@ -73,7 +73,6 @@ export default defineComponent({
           trigger: 'axis'
         },
         legend: {
-          data: props.legend,
           left: '3%'
         },
         xAxis: {
