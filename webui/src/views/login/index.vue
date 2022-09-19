@@ -13,10 +13,10 @@
               src="@/assets/svg/login-box-bg.svg"
             />
             <div class="mt-10 font-medium text-white -enter-x">
-              <span class="inline-block mt-4 text-3xl">EMS</span>
+              <span class="inline-block mt-4 text-3xl">REPORT</span>
             </div>
             <div class="mt-5 font-normal text-white text-md dark:text-gray-500 -enter-x">
-              能源管理系统
+              MES 报表系统
             </div>
           </div>
         </div>

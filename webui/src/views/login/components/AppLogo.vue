@@ -2,7 +2,7 @@
   <div class="app-logo -enter-x">
     <img src="@/assets/images/logo.png" />
     <div class="ml-2 truncate md:opacity-100 app-logo__title">
-      Element Plus Admin
+      MES REPORT
     </div>
   </div>
 </template>

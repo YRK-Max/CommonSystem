@@ -52,8 +52,14 @@
           <el-radio label="0">报表外链</el-radio>
         </el-radio-group>
       </el-form-item>
+      <el-form-item v-if="form.isFrame === '0' && !isEdit" label="报表类型">
+        <el-radio-group v-model="isCommonReport" @change="changeUrl">
+          <el-radio label="1">普通报表</el-radio>
+          <el-radio label="0">报表组</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item v-if="form.isFrame === '0' && isReport === '0'" label="报表名称">
-        <el-input v-model="reportName" @input="hanldeReportNameChange"></el-input>
+        <el-input v-model="reportName" @input="changeUrl"></el-input>
       </el-form-item>
       <el-form-item v-if="form.isFrame === '0'" label="URL地址" prop="link">
         <el-input v-model="form.link" :disabled="isReport === '0'" ></el-input>
@@ -134,6 +140,7 @@ export default defineComponent({
     const isSubMenu = ref(false)
     const reportName = ref('')
     const isReport = ref('1')
+    const isCommonReport = ref('1')
     const form = reactive({
       menuId: parseInt(getUUIDNum()),
       menuType: 'M',
@@ -229,12 +236,16 @@ export default defineComponent({
       resetForm()
     }
 
-    function hanldeReportNameChange(data) {
-      form.link = process.env.VUE_APP_RAQRPT_URL + '?rpx=' + data + '.rpx'
-    }
-
     function handleIsReportChange(data) {
       data === '0' ? form.component = 'modules/IframePageView' : form.component = ''
+    }
+
+    function changeUrl() {
+      if (isCommonReport.value === '1') {
+        form.link = process.env.VUE_APP_RAQRPT_URL + 'showReport.jsp?rpx=' + reportName.value + '.rpx'
+      } else {
+        form.link = process.env.VUE_APP_RAQRPT_URL + 'showReportGroup.jsp?rpg=' + reportName.value + '.rpg'
+      }
     }
 
     return {
@@ -249,13 +260,14 @@ export default defineComponent({
       rules,
       reportName,
       isReport,
+      isCommonReport,
       show,
       hide,
       submitForm,
       handleSelectIcon,
       handleClosed,
-      hanldeReportNameChange,
-      handleIsReportChange
+      handleIsReportChange,
+      changeUrl
     }
   }
 })

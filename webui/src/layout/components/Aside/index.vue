@@ -73,5 +73,9 @@ const fullRoutes = computed(() => store.state.permission.routes)
 
 .aside-div :deep(.el-sub-menu .el-menu-item) {
   background: #001b35;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
 }
 </style>
