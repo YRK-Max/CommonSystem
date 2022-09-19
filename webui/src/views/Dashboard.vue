@@ -76,10 +76,10 @@
     </el-row>
     <div
       class="enter-y mb-3"
-      style="display: flex; height: 460px; "
+      style="height: 460px; "
     >
       <el-row
-        class="h-full w-full enter-y little-component-class"
+        class="h-full enter-y"
         :gutter="6"
       >
         <el-col
