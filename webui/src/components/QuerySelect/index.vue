@@ -55,7 +55,7 @@ export default {
       deep: true
     }
   },
-  created() {
+  mounted() {
     this.params_real = this.params
     this.queryResult()
   },

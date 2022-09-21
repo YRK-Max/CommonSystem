@@ -19,8 +19,8 @@
       <el-col :lg="6" :sm="24" class="pb-2">
         <InfoCard
           icon="yicondowntime"
-          color="#ff942e"
-          bgColor="#ffead6"
+          color="#426cb9"
+          bgColor="#d1e1ff"
           title="出货数量"
           label1="今日出货数"
           label2="月出货总数"
@@ -31,8 +31,8 @@
       <el-col :lg="6" :sm="24" class="pb-2">
         <InfoCard
           icon="yiconjihua"
-          color="#4f3ff0"
-          bgColor="#d1ccff"
+          color="#426cb9"
+          bgColor="#d1e1ff"
           title="良率"
           label1="今日良率"
           label2="月良率"
@@ -43,8 +43,8 @@
       <el-col :lg="6" :sm="24" class="pb-2">
         <InfoCard
           icon="yiconB1"
-          color="#c12c1f"
-          bgColor="#ffd0cc"
+          color="#426cb9"
+          bgColor="#d1e1ff"
           title="设备报警数量"
           label1="今日报警数"
           label2="月报警总数"

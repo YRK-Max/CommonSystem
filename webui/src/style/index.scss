@@ -2,6 +2,8 @@
   --main-color: #426cb9;
   --el-border-radius-mid: 5px;
   --el-card-padding-10: 10px;
+  --el-card-padding-8: 8px;
+  --el-card-padding-6: 6px;
 }
 
 .card-class {
@@ -32,12 +34,13 @@ body ::-webkit-scrollbar-thumb, html ::-webkit-scrollbar-thumb {
 }
 
 .el-card__header {
-  padding: var(--el-card-padding-10) !important;
+  padding: var(--el-card-padding-6) var(--el-card-padding-8) !important;
   font-weight: bold;
+  background: linear-gradient(135deg,#ffffff,#e8efff);
 }
 
 .el-card__body {
-  padding: var(--el-card-padding-10) !important;
+  padding: var(--el-card-padding-8) !important;
 }
 
 .el-menu--popup {

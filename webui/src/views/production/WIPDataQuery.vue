@@ -3,9 +3,9 @@
     class="p-2 h-full"
     style="background: #ebeef3"
   >
-    <el-row class="h-full">
-      <el-col class="h-full overflow-hidden" :span="24">
-        <el-card class="mb-2 enter-y">
+    <el-row class="h-full enter-y" :gutter="6">
+      <el-col class="h-full overflow-hidden" :span="4">
+        <el-card header="条件查询" class="mb-2 h-full" :body-style="{ height: '100%', overflow: 'auto' }">
           <vxe-form
             ref="xWaterUseForm"
             title-width="100px"
@@ -15,7 +15,7 @@
             @submit="handlerSubmit"
             @reset="handlerReset"
           >
-          <vxe-form-item :span="5" title="站点分组" field="flow">
+          <vxe-form-item :span="24" title="站点分组" field="flow">
             <query-select
               ref="xLine"
               v-model="form.flow"
@@ -26,7 +26,7 @@
               @change="handlerLineChange"
             />
           </vxe-form-item>
-          <vxe-form-item :span="5" title="站点" field="operation">
+          <vxe-form-item :span="24" title="站点" field="operation">
             <template #default>
               <search-select
                 style="width: 100%"
@@ -38,7 +38,7 @@
               />
             </template>
           </vxe-form-item>
-          <vxe-form-item :span="5" title="设备" field="operation">
+          <vxe-form-item :span="24" title="设备" field="operation">
             <template #default>
               <search-select
                 style="width: 100%"
@@ -49,17 +49,17 @@
               />
             </template>
           </vxe-form-item>
-          <vxe-form-item :span="5" title="Lot ID" field="lot" :item-render="{}">
+          <vxe-form-item :span="24" title="Lot ID" field="lot" :item-render="{}">
             <template #default>
               <vxe-input v-model="form.lot" placeholder="请输入" type="text" clearable />
             </template>
           </vxe-form-item>
-          <vxe-form-item :span="5" title="Product ID" field="product" :item-render="{}" folding>
+          <vxe-form-item :span="24" title="Product ID" field="product" :item-render="{}">
             <template #default>
               <vxe-input clearable v-model="form.product" placeholder="请输入" type="text"></vxe-input>
             </template>
           </vxe-form-item>
-          <vxe-form-item :span="5" title="机种" field="spec" folding>
+          <vxe-form-item :span="24" title="机种" field="spec">
             <query-select
               ref="xSpec"
               v-model="form.spec"
@@ -70,7 +70,7 @@
               @changed="handleSpecChanged"
             />
           </vxe-form-item>
-          <vxe-form-item :span="5" title="工单" field="wo" folding>
+          <vxe-form-item :span="24" title="工单" field="wo">
             <search-select
               style="width: 100%"
               ref="xWO"
@@ -79,12 +79,12 @@
               :option-config="{ label: changeUL('NAME'), value: changeUL('NAME') }"
             />
           </vxe-form-item>
-          <vxe-form-item :span="5" title="载具" field="lot" :item-render="{}" folding>
+          <vxe-form-item :span="24" title="载具" field="lot" :item-render="{}">
             <template #default>
               <vxe-input v-model="form.carrier" placeholder="请输入" type="text" clearable />
             </template>
           </vxe-form-item>
-          <vxe-form-item span="4" collapse-node>
+          <vxe-form-item span="24">
             <template #default>
               <vxe-button size="small" type="submit" status="primary">查询</vxe-button>
               <vxe-button size="small" type="reset">重置</vxe-button>
@@ -92,31 +92,35 @@
           </vxe-form-item>
         </vxe-form>
         </el-card>
-        <el-row class="mb-2 enter-y" :gutter="6">
-          <el-col :span="12">
-            <el-card header="WIP 站点分布">
-              <BarChart
-                class="h-85"
-                :xAxis="operationWIPXAxis"
-                :series="operationWIPSeries"
-              />
-            </el-card>
-          </el-col>
-          <el-col :span="12">
-            <el-card header="各产品规格占比">
-              <PieChart
-                class="h-85"
-                :data="PieDatasource"
-              />
-            </el-card>
-          </el-col>
-        </el-row>
-        <el-card class="enter-y" style="height: calc(100% - 495px)" header="产品列表" :body-style="{ height: 'calc(100% - 45px)' }">
-          <DataTable
-            :columns="tableConfig.columns"
-            :data="tableConfig.productDatasource"
-          />
-        </el-card>
+      </el-col>
+      <el-col class="h-full" :span="20">
+        <div class="h-full flex flex-col">
+          <el-row class="mb-2" :gutter="6">
+            <el-col :span="12">
+              <el-card header="WIP 站点分布">
+                <BarChart
+                  class="h-85"
+                  :xAxis="operationWIPXAxis"
+                  :series="operationWIPSeries"
+                />
+              </el-card>
+            </el-col>
+            <el-col :span="12">
+              <el-card header="各产品规格占比">
+                <PieChart
+                  class="h-85"
+                  :data="PieDatasource"
+                />
+              </el-card>
+            </el-col>
+          </el-row>
+          <el-card class="flex-1" header="产品列表" :body-style="{ height: 'calc(100% - 45px)' }">
+            <DataTable
+              :columns="tableConfig.columns"
+              :data="tableConfig.productDatasource"
+            />
+          </el-card>
+        </div>
       </el-col>
     </el-row>
   </div>

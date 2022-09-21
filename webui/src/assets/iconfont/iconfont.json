@@ -6,6 +6,13 @@
   "description": "通用图标库",
   "glyphs": [
     {
+      "icon_id": "1330916",
+      "name": "叹号",
+      "font_class": "tanhao",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
       "icon_id": "17853790",
       "name": "导出excel模板",
       "font_class": "daochuexcelmoban",

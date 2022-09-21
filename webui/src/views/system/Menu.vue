@@ -32,7 +32,7 @@
       <el-table-column prop="icon" label="图标" show-overflow-tooltip />
       <el-table-column prop="perms" label="权限" show-overflow-tooltip />
       <el-table-column prop="path" label="路径" show-overflow-tooltip />
-      <el-table-column prop="component" label="Component" />
+      <el-table-column prop="component" label="Component" show-overflow-tooltip />
       <el-table-column prop="status" label="状态">
         <template #default="scope">
           <el-tag

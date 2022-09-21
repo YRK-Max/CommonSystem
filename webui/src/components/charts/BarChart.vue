@@ -33,6 +33,16 @@ export default defineComponent({
           }
         ]
       }
+    },
+    yAxis: {
+      type: Array,
+      default: () => {
+        return [
+          {
+            type: 'value'
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -55,10 +65,10 @@ export default defineComponent({
       const option = {
         grid: {
           show: true,
-          top: '12%',
+          top: '19%',
           left: '5%',
           right: '3%',
-          bottom: '15%'
+          bottom: '16%'
         },
         toolbox: {
           show: true,
@@ -82,16 +92,14 @@ export default defineComponent({
           data: props.xAxis,
           axisLabel: {
             // interval: this.axisLabelInterval,
-            rotate: 45,
+            rotate: 38,
             textStyle: {
               color: '#666666'
             },
             margin: 10
           }
         },
-        yAxis: {
-          type: 'value'
-        },
+        yAxis: props.yAxis,
         series: props.series
       }
       await nextTick()

@@ -56,7 +56,7 @@ export default defineComponent({
           top: '12%',
           left: '5%',
           right: '3%',
-          bottom: '10%'
+          bottom: '16%'
         },
         toolbox: {
           show: true,
@@ -77,7 +77,15 @@ export default defineComponent({
         },
         xAxis: {
           type: 'category',
-          data: props.xAxis
+          data: props.xAxis,
+          axisLabel: {
+            // interval: this.axisLabelInterval,
+            rotate: 38,
+            textStyle: {
+              color: '#666666'
+            },
+            margin: 10
+          }
         },
         yAxis: {
           type: 'value'
