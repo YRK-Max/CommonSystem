@@ -2,7 +2,7 @@
     <div class="p-2 overflow-hidden h-full" style="background: #ebeef3">
       <el-row class="enter-y h-full" :gutter="6">
         <el-col class="h-full" :span="4">
-          <el-card class="h-full" header="产品规格/机种">
+          <el-card class="h-full" header="设备组/设备">
             <el-input v-model="filterText" placeholder="Filter keyword" />
             <el-tree
               ref="treeRef"

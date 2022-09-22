@@ -2,7 +2,7 @@
   <div class="p-2 overflow-hidden h-full" style="background: #ebeef3">
     <el-row class="enter-y h-full" :gutter="6">
       <el-col class="h-full" :span="4">
-        <el-card class="h-full" header="产品规格/机种">
+        <el-card class="h-full" header="设备组/机台">
           <el-input v-model="filterText" placeholder="Filter keyword" />
           <el-tree
             ref="treeRef"
@@ -79,7 +79,7 @@
             加载中....
           </div>
         </el-card>
-        <el-row v-if="!loading" class="mb-2" :gutter="6">
+        <el-row v-show="!loading" class="mb-2" :gutter="6">
           <el-col :span="6">
             <InfoCard
               icon="yicontanhao"
@@ -111,14 +111,20 @@
               </div>
             </el-card>
           </el-col>
-          <el-col :span="18">
+          <el-col :span="9">
             <el-card header="设备稼动图表">
               <BarChart
+                v-if="!loading"
                 class="h-82"
                 :xAxis="chartData.xAxis"
                 :yAxis="chartData.yAxis"
                 :series="chartData.series"
               />
+            </el-card>
+          </el-col>
+          <el-col :span="9">
+            <el-card header="设备状态甘特图">
+              <div class="h-82" id="MacStateDuration"></div>
             </el-card>
           </el-col>
         </el-row>
@@ -141,6 +147,9 @@ import DataTable from '@/components/DataTable.vue'
 import YIcon from '@/components/YIcon.vue'
 import BarChart from '@/components/charts/BarChart.vue'
 import InfoCard from '@/components/InfoCard.vue'
+import * as echarts from 'echarts'
+import msData from '@/assets/files/macState.json'
+import { formatDate } from '@/utils/utils'
 export default defineComponent({
   setup() {
     const loading = ref(false)
@@ -324,6 +333,7 @@ export default defineComponent({
             stack: 'duration'
           }
         ]
+        initChart()
         setTimeout(() => {
           loading.value = false
         }, 500)
@@ -337,6 +347,148 @@ export default defineComponent({
 
     function changeUL(data) {
       return data.toLocaleLowerCase()
+    }
+
+    const initChart = () => {
+      let startTime = null
+      const categories = ['1MMAI01-AI01', '1MMAI02-AI01', '1MMAS01-AS01', '1MMAS02-AS01']
+      const types = [
+        { name: 'Trouble', color: '#ff5e5e' },
+        { name: 'Run', color: '#94ec8a' },
+        { name: 'Idle', color: '#fffb83' },
+        { name: 'Maintenance', color: '#6ca8ff' },
+        { name: 'Stop', color: '#9e3da5' },
+        { name: 'NP', color: '#ffc800' },
+        { name: 'JobChange', color: '#ffd29e' }
+      ]
+      const macStateSource = msData['result']
+      const chartsData = []
+      const dom = document.getElementById('MacStateDuration')
+      echarts.init(dom).dispose()
+      const chart = echarts.init(dom)
+      chart.clear()
+      if (macStateSource.length > 0) {
+        startTime = macStateSource[0]['TIMEKEY']
+        macStateSource.forEach(mac => {
+          const typeItem = types.filter(type => {
+            return type['name'] === (mac['OLD_MACHINE_STATE_NAME'] === 'ETC' ? 'NP' : mac['OLD_MACHINE_STATE_NAME'])
+          })[0]
+          chartsData.push({
+            name: typeItem.name,
+            value: [categories.indexOf(mac['NAME']), mac['TIMEKEY'], mac['LEAD_TIMEKEY'], mac['LEAD_TIMEKEY'] - mac['TIMEKEY']],
+            itemStyle: {
+              normal: {
+                color: typeItem.color
+              }
+            }
+          })
+        })
+      }
+      function renderItem(params, api) {
+        const categoryIndex = api.value(0)
+        const start = api.coord([api.value(1), categoryIndex])
+        const end = api.coord([api.value(2), categoryIndex])
+        const height = api.size([0, 1])[1] * 0.6
+        const rectShape = echarts.graphic.clipRectByRect(
+          {
+            x: start[0],
+            y: start[1] - height / 2,
+            width: end[0] - start[0],
+            height: height
+          },
+          {
+            x: params.coordSys.x,
+            y: params.coordSys.y,
+            width: params.coordSys.width,
+            height: params.coordSys.height
+          }
+        )
+        return (
+          rectShape && {
+            type: 'rect',
+            transition: ['shape'],
+            shape: rectShape,
+            style: api.style()
+          }
+        )
+      }
+
+      const optionData = {
+        tooltip: {
+          formatter: function(params) {
+            return params.marker + params.name + ': ' + (params.value[3] / 60 / 1000 / 60).toFixed(2) + ' 小时<br/>' +
+                formatDate(params.value[1], 'yyyy-MM-dd hh:mm:ss') +
+                ' ~ ' +
+                formatDate(params.value[2], 'yyyy-MM-dd hh:mm:ss')
+          }
+        },
+        legend: { // 图例
+          width: '80%',
+          type: 'scroll',
+          data: [
+            { name: 'Run', itemStyle: { color: '#94ec8a' }},
+            { name: 'Idle', itemStyle: { color: '#fffb83' }},
+            { name: 'Stop', itemStyle: { color: '#9e3da5' }},
+            { name: 'Maintenance(PM)', itemStyle: { color: '#4889fc' }},
+            { name: 'Trouble', itemStyle: { color: '#ff6565' }},
+            { name: 'NP', itemStyle: { color: '#ffc800' }},
+            { name: 'JobChange', itemStyle: { color: '#ffd29e' }}
+          ],
+          left: '50px',
+          selectedMode: false, // 图例设为不可点击,
+          textStyle: {
+            color: '#000000',
+            fontSize: 14
+          }
+        },
+        dataZoom: [
+          {
+            type: 'slider',
+            filterMode: 'weakFilter',
+            showDataShadow: false,
+            labelFormatter: ''
+          },
+          {
+            type: 'inside',
+            filterMode: 'weakFilter'
+          }
+        ],
+        xAxis: {
+          min: startTime,
+          scale: true,
+          axisLabel: {
+            formatter: function(val) {
+              return formatDate(val, 'yyyy-MM-dd hh:mm:ss')
+            }
+          }
+        },
+        yAxis: {
+          data: categories
+        },
+        series: [
+          { name: 'Run', type: 'bar', data: [], barMaxWidth: 10 },
+          { name: 'Idle', type: 'bar', data: [], barMaxWidth: 10 },
+          { name: 'Stop', type: 'bar', data: [], barMaxWidth: 10 },
+          { name: 'Maintenance(PM)', type: 'bar', data: [], barMaxWidth: 10 },
+          { name: 'Trouble', type: 'bar', data: [], barMaxWidth: 10 },
+          { name: 'NP', type: 'bar', data: [], barMaxWidth: 10 },
+          { name: 'JobChange', type: 'bar', data: [], barMaxWidth: 10 },
+          {
+            type: 'custom',
+            renderItem: renderItem,
+            itemStyle: {
+              opacity: 1
+            },
+            encode: {
+              x: [1, 2],
+              y: 0
+            },
+            data: chartsData
+          }
+        ]
+      }
+      chart.setOption(optionData)
+      console.log('加载完成')
     }
 
     return {

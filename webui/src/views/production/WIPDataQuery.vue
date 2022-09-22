@@ -114,7 +114,16 @@
               </el-card>
             </el-col>
           </el-row>
-          <el-card class="flex-1" header="产品列表" :body-style="{ height: 'calc(100% - 45px)' }">
+          <el-card class="flex-1" :body-style="{ height: 'calc(100% - 45px)' }">
+            <template #header>
+              <div class="flex justify-between items-center">
+                <span>产品列表</span>
+                <div>
+                  <el-checkbox v-model="checked1" label="滞留产品" size="large" />
+                  <el-checkbox v-model="checked2" label="锁定产品" size="large" @change="handleHoldCheckChange" />
+                </div>
+              </div>
+            </template>
             <DataTable
               :columns="tableConfig.columns"
               :data="tableConfig.productDatasource"
@@ -170,7 +179,8 @@ export default defineComponent({
         { title: '操作用户', field: changeUL('last_event_user'), align: 'center', width: '200' },
         { title: '操作时间', field: changeUL('last_event_time'), align: 'center', sortable: true, width: '200' }
       ],
-      productDatasource: []
+      productDatasource: [],
+      sourceData: []
     })
 
     const xOperation = ref()
@@ -308,8 +318,17 @@ export default defineComponent({
       params['sql_name'] = 'getWIPInfoByParams'
       const table_res = await executeSQL(params)
       tableConfig.productDatasource = table_res['data']
+      tableConfig.sourceData = table_res['data']
 
       loading.value = false
+    }
+
+    function handleHoldCheckChange(data) {
+      if (data) {
+        tableConfig.productDatasource = tableConfig.sourceData.filter((d) => { return d['hold_state'] === 'Hold' })
+      } else {
+        tableConfig.productDatasource = tableConfig.sourceData
+      }
     }
 
     initData()
@@ -331,7 +350,8 @@ export default defineComponent({
       changeUL,
       handlerLineChange,
       handlerOperationChange,
-      handlerSubmit
+      handlerSubmit,
+      handleHoldCheckChange
     }
   }
 })

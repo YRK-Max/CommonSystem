@@ -198,56 +198,56 @@ export default defineComponent({
         { title: 'GROUP_NAME', field: changeUL('CLEAR_TIME'), align: 'center', width: 150 },
         { title: '2022M07', field: changeUL('CLEAR_USER'), align: 'center', width: 150,
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         },
         { title: '2022M08', field: changeUL('CLEAR_USER'), align: 'center',
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         },
         { title: '2022M09', field: changeUL('CLEAR_USER'), align: 'center',
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         },
         { title: '20220915', field: changeUL('CLEAR_USER'), align: 'center',
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         },
         { title: '20220916', field: changeUL('CLEAR_USER'), align: 'center',
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         },
         { title: '20220917', field: changeUL('CLEAR_USER'), align: 'center',
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         },
         { title: '20220918', field: changeUL('CLEAR_USER'), align: 'center',
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         },
         { title: '20220919', field: changeUL('CLEAR_USER'), align: 'center',
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         },
         { title: '20220920', field: changeUL('CLEAR_USER'), align: 'center',
           children: [
-            { title: 'GLS_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 },
-            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 100 }
+            { title: 'PRODUCT_QTY', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 },
+            { title: 'TACK_TIME', field: changeUL('ALARM_TEXT'), align: 'center', width: 110 }
           ]
         }
       ],
@@ -380,7 +380,7 @@ export default defineComponent({
 </script>
   <style lang="scss" scoped>
   .filter-tree :deep(.el-tree-node__label) {
-  width: 100%;
+  width: 110%;
   text-overflow: ellipsis;
   overflow: hidden;
   }

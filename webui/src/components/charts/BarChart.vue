@@ -66,8 +66,8 @@ export default defineComponent({
         grid: {
           show: true,
           top: '19%',
-          left: '5%',
-          right: '3%',
+          left: '8%',
+          right: '6%',
           bottom: '16%'
         },
         toolbox: {
