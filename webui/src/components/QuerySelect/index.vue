@@ -27,7 +27,7 @@ export default {
     event: 'changed'
   },
   // eslint-disable-next-line vue/require-prop-types
-  props: ['optionConfig', 'url', 'params', 'options', 'method', 'displayFirstDefault', 'multiple'],
+  props: ['optionConfig', 'isRemote', 'params', 'options', 'method', 'displayFirstDefault', 'multiple'],
   data() {
     return {
       optionsList: [],
@@ -62,7 +62,7 @@ export default {
   methods: {
     queryResult() {
       const that = this
-      if (this.url) {
+      if (this.isRemote) {
         executeSQL(this.params_real).then(res => {
           if (res && res['code'] === 200) {
             that.optionsList = res.data

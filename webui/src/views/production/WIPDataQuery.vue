@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="p-2 h-full"
-    style="background: #ebeef3"
-  >
+  <div class="p-2 overflow-hidden h-full" style="background: #ebeef3">
     <el-row class="h-full enter-y" :gutter="6">
       <el-col class="h-full overflow-hidden" :span="4">
         <el-card header="条件查询" class="mb-2 h-full" :body-style="{ height: '100%', overflow: 'auto' }">
@@ -63,7 +60,7 @@
             <query-select
               ref="xSpec"
               v-model="form.spec"
-              url="/common/executeSql"
+              :isRemote="true"
               method="post"
               :params="{ sql_name: 'getAllProductSpec' }"
               :option-config="{ label: 'name', value: 'value' }"

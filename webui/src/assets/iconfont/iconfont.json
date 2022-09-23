@@ -6,6 +6,20 @@
   "description": "通用图标库",
   "glyphs": [
     {
+      "icon_id": "8802639",
+      "name": "执行",
+      "font_class": "zhihang",
+      "unicode": "e649",
+      "unicode_decimal": 58953
+    },
+    {
+      "icon_id": "20853326",
+      "name": "SQL配置",
+      "font_class": "SQLpeizhi",
+      "unicode": "e6a4",
+      "unicode_decimal": 59044
+    },
+    {
       "icon_id": "1330916",
       "name": "叹号",
       "font_class": "tanhao",
