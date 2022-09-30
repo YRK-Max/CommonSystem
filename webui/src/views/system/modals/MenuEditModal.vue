@@ -21,7 +21,7 @@
         </el-radio-group>
       </el-form-item>
       <el-form-item v-if="form.menuType=='C'" label="页面类型" prop="isFrame">
-        <el-radio-group v-model="form.isFrame">
+        <el-radio-group v-model="form.isFrame" @change="handleIsFrameChange">
           <el-radio label="1">路由页面</el-radio>
           <el-radio label="0">外链页面</el-radio>
         </el-radio-group>
@@ -47,12 +47,12 @@
         <el-input v-model="form.path"></el-input>
       </el-form-item>
       <el-form-item v-if="form.isFrame === '0' && !isEdit" label="外链类型">
-        <el-radio-group v-model="isReport" @change="handleIsReportChange">
+        <el-radio-group v-model="isReport">
           <el-radio label="1">普通外链</el-radio>
           <el-radio label="0">报表外链</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item v-if="form.isFrame === '0' && !isEdit" label="报表类型">
+      <el-form-item v-if="form.isFrame === '0' && isReport === '0' && !isEdit" label="报表类型">
         <el-radio-group v-model="isCommonReport" @change="changeUrl">
           <el-radio label="1">普通报表</el-radio>
           <el-radio label="0">报表组</el-radio>
@@ -236,7 +236,7 @@ export default defineComponent({
       resetForm()
     }
 
-    function handleIsReportChange(data) {
+    function handleIsFrameChange(data) {
       data === '0' ? form.component = 'modules/IframePageView' : form.component = ''
     }
 
@@ -266,7 +266,7 @@ export default defineComponent({
       submitForm,
       handleSelectIcon,
       handleClosed,
-      handleIsReportChange,
+      handleIsFrameChange,
       changeUrl
     }
   }

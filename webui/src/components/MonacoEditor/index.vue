@@ -26,6 +26,7 @@ export default defineComponent({
   },
   setup(props) {
     const editor = ref(null)
+    const currentCodeText = ref('')
 
     const registerCompletion = () => {
       monaco.languages.registerCompletionItemProvider('sql', {
@@ -85,12 +86,14 @@ export default defineComponent({
       })
       // 监听值的变化
       editor.value.onDidChangeModelContent((val) => {
-        console.log(val.changes[0].text)
+        console.log(monaco.editor.getModels()[0].getValue())
+        currentCodeText.value = val.changes[0].text
       })
     }
 
     watch(props, (val) => {
       monaco.editor.getModels()[0].setValue(val.codeText)
+      currentCodeText.value = val.codeText
     })
 
     nextTick(() => {

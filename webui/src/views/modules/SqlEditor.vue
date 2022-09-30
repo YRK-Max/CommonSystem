@@ -36,7 +36,13 @@
             </div>
             <div class="h-full flex-1">
                 <div class="mb-2">
-                  <el-button size="small" type="primary" color="#426cb9">
+                  <el-button
+                    size="small"
+                    type="primary"
+                    color="#426cb9"
+                    :disabled="!currentSQL.sql_str"
+                    @click="handleExecuteSQL"
+                  >
                     <template #icon>
                       <YIcon icon="yiconzhihang" :size="11"></YIcon>
                     </template>
@@ -106,6 +112,10 @@ export default defineComponent({
       editForm.description = sql.description
     }
 
+    const handleExecuteSQL = () => {
+
+    }
+
     executeSQL({ sql_name: 'getSqlList' }).then(res => {
       if (res && res['code'] === 200) {
         sqlList.length = 0
@@ -119,7 +129,8 @@ export default defineComponent({
       currentSQL,
       editForm,
       handleTypeChange,
-      handleSQLSelected
+      handleSQLSelected,
+      handleExecuteSQL
     }
   },
   components: { MonacoEditor, QuerySelect, YIcon, DataTable }

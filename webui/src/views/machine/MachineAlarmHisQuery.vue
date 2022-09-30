@@ -46,139 +46,130 @@
            </vxe-form-item>
               </vxe-form>
             </el-card>
-          
+
           <el-card class="h-full"  header="Alarm历史表"   :body-style="{ height: '100%' }">
             <DataTable
            :showToolbar="true"
            :columns="tableConfig.columns"
            :data="tableConfig.datasource"
-         /> 
+         />
         </el-card>
       </el-col>
     </el-row>
   </div>
-  
+
 </template>
 <script>
-import { defineComponent, reactive, ref ,watch} from 'vue'
-import QuerySelect from '@/components/QuerySelect'
+import { defineComponent, reactive, ref, watch } from 'vue'
 import DataTable from '@/components/DataTable.vue'
 import { getCurrentTime } from '@/utils/utils'
 import { executeSQL } from '@/api/server'
 import { ElMessage } from 'element-plus'
 
 export default defineComponent({
- components: { DataTable, QuerySelect },
- setup() {
-  
-  const form = reactive({
-    startTime: getCurrentTime('date', -7, 'day') + ' 08:30:00',
-    endTime: getCurrentTime('date') + ' 08:30:00',
-    name: undefined,
-    unit: undefined
+  components: { DataTable },
+  setup() {
+    const form = reactive({
+      startTime: getCurrentTime('date', -7, 'day') + ' 08:30:00',
+      endTime: getCurrentTime('date') + ' 08:30:00',
+      name: undefined,
+      unit: undefined
 
-  })
-  const queryParams = reactive({
-    name: undefined,
-    unit: undefined,
-  })
-   const treeData = reactive([])
-   const machinegroup = reactive([])
-   const filterText = ref('')
-   const treeRef = ref()
-   const loading = ref(false)
-   watch(filterText,(val)=>{
-     treeRef.value.filter(val)
-   })
+    })
+    const queryParams = reactive({
+      name: undefined,
+      unit: undefined
+    })
+    const treeData = reactive([])
+    const machinegroup = reactive([])
+    const filterText = ref('')
+    const treeRef = ref()
+    const loading = ref(false)
+    watch(filterText, (val) => {
+      treeRef.value.filter(val)
+    })
 
-  
-   function filterNode(value, data) {
-     if (!value) return true
-     return data.label.indexOf(value) !== -1
-   }
+    function filterNode(value, data) {
+      if (!value) return true
+      return data.label.indexOf(value) !== -1
+    }
 
     function getMachineList() {
-     executeSQL({ sql_name: 'getRtmMachineList' }).then((res) => {
-       if (res && res['code'] === 200) {
-        const tempData = res['data']
-         const parentArr = [...new Set(tempData.map(item => item.machine))]
-         parentArr.forEach(item => {
-           let tempItem = {
-             label: item,
-             children: [...tempData.filter(i => i.machine === item).map(i => {
-               return { label: i.description  +'['+i.unit + ']', machine: i.unit}
-             })],
-           }
-           treeData.push(tempItem)
-         });
-       } else {
-         ElMessage.error(res['msg'])
-      }
-   })
-   }
-   getMachineList()
+      executeSQL({ sql_name: 'getRtmMachineList' }).then((res) => {
+        if (res && res['code'] === 200) {
+          const tempData = res['data']
+          const parentArr = [...new Set(tempData.map(item => item.machine))]
+          parentArr.forEach(item => {
+            const tempItem = {
+              label: item,
+              children: [...tempData.filter(i => i.machine === item).map(i => {
+                return { label: i.description + '[' + i.unit + ']', machine: i.unit }
+              })]
+            }
+            treeData.push(tempItem)
+          })
+        } else {
+          ElMessage.error(res['msg'])
+        }
+      })
+    }
+    getMachineList()
 
+    const tableConfig = reactive({
+      columns: [
+        { title: 'ALARM_ID', field: changeUL('ALARM_ID'), align: 'center', sortable: true, width: 150, showOverflow: true },
+        { title: 'MACHINE_NAME', field: changeUL('MACHINE_NAME'), align: 'center', sortable: true, width: 150, showOverflow: true },
+        { title: 'SET_TIME', field: changeUL('SET_TIME'), align: 'center', sortable: true, width: 150, showOverflow: true },
+        { title: 'ALARM_STATE', field: changeUL('ALARM_STATE'), align: 'center', sortable: true, width: 150, showOverflow: true },
+        { title: 'CLEAR_TIME', field: changeUL('CLEAR_TIME'), align: 'center', width: 150, showOverflow: true },
+        { title: 'CLEAR_USER', field: changeUL('CLEAR_USER'), align: 'center', width: 150, showOverflow: true },
+        { title: 'ALARM_TEXT', field: changeUL('ALARM_TEXT'), align: 'center', width: 150, showOverflow: true },
+        { title: 'ALARM_CODE', field: changeUL('ALARM_CODE'), align: 'center', width: 150, showOverflow: true },
+        { title: 'ALARM_LEVEL', field: changeUL('ALARM_LEVEL'), align: 'center', width: 150 },
+        { title: 'UNIT_NAME', field: changeUL('UNIT_NAME'), align: 'center', width: 150 }
 
-   const tableConfig = reactive({
-     columns: [
-       { title: 'ALARM_ID', field: changeUL('ALARM_ID'), align: 'center', sortable: true, width: 150, showOverflow: true },
-       { title: 'MACHINE_NAME', field: changeUL('MACHINE_NAME'), align: 'center', sortable: true, width: 150, showOverflow: true },
-       { title: 'SET_TIME', field: changeUL('SET_TIME'), align: 'center', sortable: true, width: 150, showOverflow: true },
-       { title: 'ALARM_STATE', field: changeUL('ALARM_STATE'), align: 'center', sortable: true, width: 150, showOverflow: true },
-       { title: 'CLEAR_TIME', field: changeUL('CLEAR_TIME'), align: 'center', width: 150, showOverflow: true },
-       { title: 'CLEAR_USER', field: changeUL('CLEAR_USER'), align: 'center', width: 150, showOverflow: true },
-       { title: 'ALARM_TEXT', field: changeUL('ALARM_TEXT'), align: 'center', width: 150, showOverflow: true },
-       { title: 'ALARM_CODE', field: changeUL('ALARM_CODE'), align: 'center', width: 150, showOverflow: true },
-       { title: 'ALARM_LEVEL', field: changeUL('ALARM_LEVEL'), align: 'center', width: 150 },
-       { title: 'UNIT_NAME', field: changeUL('UNIT_NAME'), align: 'center', width: 150 },
-    
-     ],
-     datasource: []
-   })
+      ],
+      datasource: []
+    })
 
-   function changeUL(data) {
-     return data.toLocaleLowerCase()
-   }
+    function changeUL(data) {
+      return data.toLocaleLowerCase()
+    }
 
+    async function handleMachineNodeClick(data) {
+      loading.value = true
+      queryParams['sql_name'] = 'getMacAlarmList'
+      queryParams['unit'] = data.machine
+      const res = await executeSQL(queryParams)
+      tableConfig.datasource = res['data']
+      loading.value = false
+      machinegroup.value = data.machine
+    }
 
-
-  
-   async function handleMachineNodeClick(data) {
-    loading.value=true,
-     queryParams['sql_name'] = 'getMacAlarmList',
-     queryParams['unit'] = data.machine
-     const res = await executeSQL(queryParams)
-     tableConfig.datasource = res['data']
-     loading.value=false
-     machinegroup.value=data.machine
-   }
-   
-   
-
-   async function handleQuery(data) {
-      loading.value=true
+    async function handleQuery() {
+      loading.value = true
       const params = JSON.parse(JSON.stringify(form))
       params['sql_name'] = 'getMacAlarmParams'
       params['unit'] = machinegroup.value
-     const res = await executeSQL(params)
-     tableConfig.datasource = res['data']
-     loading.value=false
-   }
-   return {
-     treeData,
-     filterText,
-     treeRef,
-     filterNode,
-     getMachineList,
-     form,
-     machinegroup,
-     tableConfig,
-     changeUL,
-     handleMachineNodeClick,
-     handleQuery,
-     loading
-   }
- }
+      const res = await executeSQL(params)
+      tableConfig.datasource = res['data']
+      loading.value = false
+    }
+    return {
+      treeData,
+      filterText,
+      treeRef,
+      filterNode,
+      getMachineList,
+      form,
+      machinegroup,
+      tableConfig,
+      changeUL,
+      handleMachineNodeClick,
+      handleQuery,
+      loading
+    }
+  }
 })
 </script>
 <style lang="scss" scoped>
