@@ -86,7 +86,6 @@ export default defineComponent({
       })
       // 监听值的变化
       editor.value.onDidChangeModelContent((val) => {
-        console.log(monaco.editor.getModels()[0].getValue())
         currentCodeText.value = val.changes[0].text
       })
     }

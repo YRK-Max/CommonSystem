@@ -20,15 +20,16 @@
                         SQL 列表
                     </label>
                     <div class="flex-1 overflow-auto pr-1">
-                        <div v-if="sqlList.length === 0" style="color: #426cb9" class="h-full flex items-center justify-center">
+                        <div v-if="sqlList.source.length === 0" style="color: #426cb9" class="h-full flex items-center justify-center">
                           <div>
                             <YIcon class="loading" icon="yiconloading" color="#426cb9" :size="25" />
                             加载中....
                           </div>
                         </div>
-                        <div v-for="sql in sqlList" class="sql-div mb-1 p-1" :class="[ currentSQL['sql_name'] === sql['sql_name']?'selected':'' ]" :key="sql['sql_name']" @click="handleSQLSelected(sql)">
+                        <div v-for="sql in sqlList.displayList" class="sql-div mb-1 p-1" :class="[ currentSQL['sql_name'] === sql['sql_name']?'selected':'' ]" :key="sql['sql_name']" @click="handleSQLSelected(sql)">
                             <label>{{ sql.sql_name }}</label>
                             <label class="mt-2">所属：{{ sql.belong }}</label>
+                            <label class="mt-1">所属：{{ sql.update_time }}</label>
                             <label class="mt-1">描述：{{ sql.description }}</label>
                         </div>
                     </div>
@@ -66,7 +67,6 @@
                             method="post"
                             :params="{ sql_name: 'getSqlType' }"
                             :option-config="{ label: 'belong', value: 'belong' }"
-                            @change="handleTypeChange"
                         />
                       </el-form-item>
                       <el-form-item label="描述">
@@ -75,8 +75,14 @@
                     </el-form>
                   </div>
                 </el-card>
-                <el-card style="height: calc(50% - 42px)" body-style="height: 100%">
-                  <DataTable />
+                <el-card style="height: calc(50% - 42px)" body-style="height: 100%; padding: 0 !important">
+                  <DataTable
+                    title="查询结果"
+                    :showToolbar="true"
+                    :loading="tableConfig.loading"
+                    :columns="tableConfig.columns"
+                    :data="tableConfig.datasource"
+                  />
                 </el-card>
             </div>
     </div>
@@ -94,15 +100,27 @@ export default defineComponent({
     const form = reactive({
       sqlType: ''
     })
-    const sqlList = reactive([])
+    const sqlList = reactive({
+      source: [],
+      displayList: []
+    })
     const currentSQL = reactive({})
     const editForm = reactive({
       belong: '',
       description: ''
     })
+    const tableConfig = reactive({
+      loading: false,
+      columns: [],
+      datasource: []
+    })
 
     const handleTypeChange = (data) => {
-      console.log(data)
+      if (data.value) {
+        sqlList.displayList = sqlList.source.filter(s => { return s['belong'] === data.value })
+      } else {
+        sqlList.displayList = sqlList.source
+      }
     }
 
     const handleSQLSelected = (sql) => {
@@ -113,13 +131,29 @@ export default defineComponent({
     }
 
     const handleExecuteSQL = () => {
-
+      tableConfig.loading = true
+      executeSQL({ sql_name: currentSQL.sql_name }).then(res => {
+        if (res && res['data']) {
+          const data = res['data']
+          if (data.length > 0) {
+            const first = data[0]
+            const cols = []
+            Object.keys(first).forEach(col => {
+              cols.push({ title: col, field: col, align: 'center' })
+            })
+            tableConfig.columns = cols
+          }
+          tableConfig.datasource = data
+          tableConfig.loading = false
+        }
+      })
     }
 
     executeSQL({ sql_name: 'getSqlList' }).then(res => {
       if (res && res['code'] === 200) {
-        sqlList.length = 0
-        sqlList.push(...res['data'])
+        sqlList.source.length = 0
+        sqlList.source.push(...res['data'])
+        sqlList.displayList = sqlList.source
       }
     })
 
@@ -128,6 +162,7 @@ export default defineComponent({
       sqlList,
       currentSQL,
       editForm,
+      tableConfig,
       handleTypeChange,
       handleSQLSelected,
       handleExecuteSQL
@@ -150,12 +185,12 @@ export default defineComponent({
   }
 }
 .sql-div:hover {
-  height: 80px;
+  height: 122px;
   background: #677fac;
   color: white;
 }
 .selected {
-  height: 80px;
+  height: 122px;
   background: #426cb9;
   color: white;
 }

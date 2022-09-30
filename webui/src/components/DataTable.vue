@@ -3,6 +3,7 @@
         v-bind="gridOptions"
         :columns="columns"
         :data="datasource"
+        :loading="loading"
     >
       <template #toolbar_buttons>
         <YIcon icon="yiconmore" style="marginLeft: 5px" />
