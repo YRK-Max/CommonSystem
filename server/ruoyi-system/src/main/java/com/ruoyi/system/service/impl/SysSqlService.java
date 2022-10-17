@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class SysSqlService implements ISysSqlService {
@@ -20,6 +22,23 @@ public class SysSqlService implements ISysSqlService {
 
     @Value("${path.layout}")
     private String FilePath;
+
+    /**
+     * 参数校验
+     *
+     * @param str ep: "or 1=1"
+     */
+    public boolean isSqlValid(String str) {
+        String reg = "(?:--)|(/\\*(?:.|[\\n\\r])*?\\*/)|"
+                + "(\\b(update|delete|insert|trancate|char|into|ascii|declare|exec|master|into|drop|execute)\\b)";
+        Pattern sqlPattern = Pattern.compile(reg, Pattern.CASE_INSENSITIVE);//表示忽略大小写
+        Matcher matcher = sqlPattern.matcher(str);
+        if (matcher.find()) {
+            System.out.println("参数存在非法字符，请确认："+matcher.group());//获取非法字符：or
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public List<Map<?, ?>> executeSql(Map<String, String> map) {
@@ -35,20 +54,22 @@ public class SysSqlService implements ISysSqlService {
 
         String sqlStr = commonReportMapper.getSqlStr(map);
 
-        for(Map.Entry<String, String> mapEntry : map.entrySet()) {
+        for (Map.Entry<String, String> mapEntry : map.entrySet()) {
             String sql_temp = "";
-            if(mapEntry.getKey().contains("Number")){
+            if (mapEntry.getKey().contains("Number")) {
                 sql_temp = sqlStr.replace("#{" + mapEntry.getKey() + "}", mapEntry.getValue().equals("") ? "NULL" : mapEntry.getValue());
-            }else {
+            } else {
                 sql_temp = sqlStr.replace("#{" + mapEntry.getKey() + "}", mapEntry.getValue().equals("") ? "NULL" : "'" + mapEntry.getValue() + "'");
             }
             sqlStr = sql_temp;
-        };
+        }
 
-        System.out.println(sqlStr);
-
-        map.put("sqlStr", sqlStr.toString());
-        return commonReportMapper.executeSql(map);
+        if (isSqlValid(sqlStr)) {
+            map.put("sqlStr", sqlStr);
+            return commonReportMapper.executeSql(map);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -134,12 +155,18 @@ public class SysSqlService implements ISysSqlService {
 
     @Override
     public int insertSQLStr(Map map) {
-        return commonReportMapper.insertSQLStr(map);
+        if(isSqlValid(map.get("sql_str").toString())) {
+            return commonReportMapper.insertSQLStr(map);
+        }
+        return 0;
     }
 
     @Override
     public int updateSQLStr(Map map) {
-        return commonReportMapper.updateSQLStr(map);
+        if(isSqlValid(map.get("sql_str").toString())) {
+            return commonReportMapper.updateSQLStr(map);
+        }
+        return 0;
     }
 
     @Override

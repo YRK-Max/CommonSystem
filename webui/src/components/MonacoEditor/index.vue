@@ -24,7 +24,8 @@ export default defineComponent({
       }
     }
   },
-  setup(props) {
+  emits: ['change'],
+  setup(props, context) {
     const editor = ref(null)
     const currentCodeText = ref('')
 
@@ -85,8 +86,8 @@ export default defineComponent({
         quickSuggestionsDelay: 100 // 代码提示延时
       })
       // 监听值的变化
-      editor.value.onDidChangeModelContent((val) => {
-        currentCodeText.value = val.changes[0].text
+      editor.value.onDidChangeModelContent(() => {
+        context.emit('change', monaco.editor.getModels()[0].getValue())
       })
     }
 

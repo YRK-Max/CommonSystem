@@ -49,16 +49,16 @@
               </template>
               执行
             </el-button>
-            <el-button size="small">
+            <el-button v-if="isEdit" size="small" @click="handleSaveSql">
               <template #icon>
-                <YIcon icon="yiconeditor" :size="11"></YIcon>
+                <YIcon icon="yiconbaocun" :size="14"></YIcon>
               </template>
-              编辑
+              保存
             </el-button>
           </div>
           <el-card class="h-2/4 mb-2" body-style="height: 100%">
             <div class="h-full w-full flex flex-col">
-              <MonacoEditor class="flex-1 w-full" type="sql" :codeText="currentSQL.sql_str" />
+              <MonacoEditor class="flex-1 w-full" type="sql" :codeText="currentSQL.sql_str" @change="handleSqlChange" />
               <el-form  class="mt-2" :label-width="80" label-position="left">
                 <el-form-item label="所属分组">
                   <QuerySelect
@@ -89,18 +89,19 @@
               <div :style="{ background: linkState==='连接中...'?'#ff7f50':'#7bed9f' }" class="link-state"></div>
               <div>{{ linkState }}</div>
             </div>
-            <div>查询用时: 0.5s</div>
+            <div>查询用时: {{ queryUseTime }}s</div>
           </div>
       </div>
     </div>
 </template>
 <script>
-import { defineComponent, reactive, ref } from 'vue'
+import { defineComponent, reactive, ref, watch } from 'vue'
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import QuerySelect from '@/components/QuerySelect/index.vue'
-import { executeSQL } from '@/api/server'
+import { executeSQL, updateSql } from '@/api/server'
 import YIcon from '@/components/YIcon.vue'
 import DataTable from '@/components/DataTable.vue'
+import { ElMessage } from 'element-plus'
 
 export default defineComponent({
   setup() {
@@ -113,6 +114,8 @@ export default defineComponent({
     })
     const currentSQL = reactive({})
     const editForm = reactive({
+      sql_name: '',
+      sql_str: '',
       belong: '',
       description: ''
     })
@@ -123,6 +126,8 @@ export default defineComponent({
     })
     const linkState = ref('连接中...')
     const linkStateColor = ref('#ff7f50')
+    const queryUseTime = ref(0)
+    const isEdit = ref(false)
 
     const handleTypeChange = (data) => {
       if (data.value) {
@@ -133,13 +138,15 @@ export default defineComponent({
     }
 
     const handleSQLSelected = (sql) => {
-      currentSQL.sql_name = sql.sql_name
-      currentSQL.sql_str = sql.sql_str
-      editForm.belong = sql.belong
-      editForm.description = sql.description
+      currentSQL.sql_name = editForm.sql_name = sql.sql_name
+      currentSQL.sql_str = editForm.sql_str = sql.sql_str
+      currentSQL.belong = editForm.belong = sql.belong
+      currentSQL.description = editForm.description = sql.description
+      isEdit.value = false
     }
 
     const handleExecuteSQL = () => {
+      const startTime = new Date()
       tableConfig.loading = true
       executeSQL({ sql_name: currentSQL.sql_name }).then(res => {
         if (res && res['data']) {
@@ -155,8 +162,35 @@ export default defineComponent({
           tableConfig.datasource = data
           tableConfig.loading = false
         }
+        queryUseTime.value = ((new Date()) - startTime) / 1000
       })
     }
+
+    const handleSqlChange = (sql_str) => {
+      if (sql_str !== currentSQL.sql_str) {
+        isEdit.value = true
+        editForm.sql_str = sql_str
+      } else {
+        isEdit.value = false
+      }
+    }
+
+    const handleSaveSql = () => {
+      updateSql(editForm).then(res => {
+        if (res && res['code'] === 200) {
+          ElMessage.success(res['msg'])
+          isEdit.value = false
+        }
+      })
+    }
+
+    watch(editForm, (val) => {
+      if (currentSQL.belong !== val.belong || currentSQL.description !== val.description || currentSQL.sql_str !== val.sql_str) {
+        isEdit.value = true
+      } else {
+        isEdit.value = false
+      }
+    })
 
     executeSQL({ sql_name: 'getSqlList' }).then(res => {
       if (res && res['code'] === 200) {
@@ -179,9 +213,13 @@ export default defineComponent({
       tableConfig,
       linkState,
       linkStateColor,
+      queryUseTime,
+      isEdit,
       handleTypeChange,
       handleSQLSelected,
-      handleExecuteSQL
+      handleExecuteSQL,
+      handleSqlChange,
+      handleSaveSql
     }
   },
   components: { MonacoEditor, QuerySelect, YIcon, DataTable }
