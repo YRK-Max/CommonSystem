@@ -1,17 +1,17 @@
 package com.ruoyi.web.controller.common;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.system.service.impl.SysSqlService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import com.ruoyi.common.config.RuoYiConfig;
 import com.ruoyi.common.constant.Constants;
@@ -34,6 +34,9 @@ public class CommonController
 
     @Autowired
     private ServerConfig serverConfig;
+
+    @Autowired
+    private SysSqlService sysSqlService;
 
     private static final String FILE_DELIMETER = ",";
 
@@ -133,6 +136,111 @@ public class CommonController
     }
 
     /**
+     * 获取报表文件夹内所有报表文件信息
+     */
+    @GetMapping("/getRptFiles")
+    public AjaxResult getRptFiles() {
+        List<Map> filesMap = new ArrayList<>();
+        String path = getReportFilesPath();
+        File file = new File(path);
+        File[] files = file.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            Map file_infos = new HashMap();
+            File single_file = files[i];
+            file_infos.put("fileName", single_file.getName());
+            file_infos.put("filePath", single_file.getAbsoluteFile());
+            file_infos.put("fileLastModified", DateUtils.parseDateToStr(DateUtils.YYYY_MM_DD_HH_MM_SS, new Date(single_file.lastModified())));
+            file_infos.put("fileSize", (single_file.length() / 1000) + "kb");
+            filesMap.add(file_infos);
+        }
+        return AjaxResult.success(filesMap);
+    }
+
+    /**
+     * 下载报表文件请求
+     *
+     * @param fileName 文件名称
+     */
+    @GetMapping("/rptDownload")
+    public void rptFileDownload(String fileName, HttpServletResponse response)
+    {
+        try
+        {
+            if (!FileUtils.checkAllowDownload(fileName))
+            {
+                throw new Exception(StringUtils.format("文件名称({})非法，不允许下载。 ", fileName));
+            }
+            String filePath = getReportFilesPath() + '/' + fileName;
+
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            FileUtils.setAttachmentResponseHeader(response, fileName);
+            FileUtils.writeBytes(filePath, response.getOutputStream());
+        }
+        catch (Exception e)
+        {
+            log.error("下载文件失败", e);
+        }
+    }
+
+    /**
+     * 报表上传请求（多个）
+     */
+    @PostMapping("/uploadRpts")
+    public AjaxResult uploadReportFiles(List<MultipartFile> reportFiles) throws Exception
+    {
+        try
+        {
+            // 上传文件路径
+            String filePath = getReportFilesPath();
+            List<String> urls = new ArrayList<String>();
+            List<String> fileNames = new ArrayList<String>();
+            List<String> newFileNames = new ArrayList<String>();
+            List<String> originalFilenames = new ArrayList<String>();
+            for (MultipartFile file : reportFiles)
+            {
+                // 上传并返回新文件名称
+                String fileName = FileUploadUtils.upload(filePath, file);
+                String url = serverConfig.getUrl() + fileName;
+                urls.add(url);
+                fileNames.add(fileName);
+                newFileNames.add(FileUtils.getName(fileName));
+                originalFilenames.add(file.getOriginalFilename());
+            }
+            AjaxResult ajax = AjaxResult.success();
+            ajax.put("urls", StringUtils.join(urls, FILE_DELIMETER));
+            ajax.put("fileNames", StringUtils.join(fileNames, FILE_DELIMETER));
+            ajax.put("newFileNames", StringUtils.join(newFileNames, FILE_DELIMETER));
+            ajax.put("originalFilenames", StringUtils.join(originalFilenames, FILE_DELIMETER));
+            return ajax;
+        }
+        catch (Exception e)
+        {
+            return AjaxResult.error(e.getMessage());
+        }
+    }
+
+    /**
+     * 报表文件删除请求
+     *
+     * @param fileName 文件名称
+     */
+    @DeleteMapping("/deleteRpt/{fileName}")
+    public AjaxResult rptFileDelete(@PathVariable("fileName") String fileName)
+    {
+        try
+        {
+            String filePath = getReportFilesPath() + '/' + fileName;
+            FileUtils.deleteFile(filePath);
+            return AjaxResult.success("删除成功");
+        }
+        catch (Exception e)
+        {
+            log.error("下载文件失败", e);
+        }
+        return AjaxResult.error("删除失败");
+    }
+
+    /**
      * 本地资源通用下载
      */
     @GetMapping("/download/resource")
@@ -159,5 +267,12 @@ public class CommonController
         {
             log.error("下载文件失败", e);
         }
+    }
+
+    public String getReportFilesPath() {
+        Map<String, String> params = new HashMap<>();
+        params.put("sql_name", "getReportFilesPath");
+        Map<?, ?> result = sysSqlService.executeSql(params).get(0);
+        return result.get("value").toString();
     }
 }

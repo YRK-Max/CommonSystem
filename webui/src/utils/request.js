@@ -25,7 +25,7 @@ service.interceptors.request.use(config => {
 service.interceptors.response.use(response => {
   const data = response.data
 
-  if (response.status !== 200 || data.code !== 200) {
+  if (response.status !== 200 || (data.code !== 200 && data.type !== 'application/octet-stream')) {
     let message = data['msg'] || 'UnKown Error.'
     let type = 'error'
 

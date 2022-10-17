@@ -27,6 +27,9 @@ public class RuoYiConfig
     /** 上传路径 */
     private static String profile;
 
+    /** 报表文件路径 */
+    private static String reportFilePath;
+
     /** 获取地址开关 */
     private static boolean addressEnabled;
 
@@ -81,6 +84,14 @@ public class RuoYiConfig
     public void setProfile(String profile)
     {
         RuoYiConfig.profile = profile;
+    }
+
+    public static String getReportFilePath() {
+        return reportFilePath;
+    }
+
+    public void setReportFilePath(String reportFilePath) {
+        RuoYiConfig.reportFilePath = reportFilePath;
     }
 
     public static boolean isAddressEnabled()

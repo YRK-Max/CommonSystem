@@ -110,7 +110,11 @@ public class FileUploadUtils
 
         assertAllowed(file, allowedExtension);
 
-        String fileName = extractFilename(file);
+        // 在原文件名上加上年/月/日
+        // String fileName = extractFilename(file);
+
+        // 保持原文件名称，为了报表文件上传做的修改
+        String fileName = file.getOriginalFilename();
 
         String absPath = getAbsoluteFile(baseDir, fileName).getAbsolutePath();
         file.transferTo(Paths.get(absPath));

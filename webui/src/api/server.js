@@ -35,3 +35,8 @@ export const getDeptTreeList = () => { return service.get('/system/dept/treesele
 // sql 执行
 export const executeSQL = (data) => { return service.post('/system/sql/executeSql', data) }
 export const getLayout = (data) => { return service.post('/system/sql/getLayout', data) }
+
+// 报表文件相关
+export const getRptFiles = () => { return service.get('/common/getRptFiles') }
+export const downloadRptFiles = (data) => { return service.get('/common/rptDownload', { params: data, responseType: 'blob' }) }
+export const deleteRptFile = (fileName) => { return service.delete('/common/deleteRpt/' + fileName) }

@@ -35,6 +35,8 @@ public class MimeTypeUtils
             "rar", "zip", "gz", "bz2",
             // 视频格式
             "mp4", "avi", "rmvb",
+            // 报表文件
+            "rpx", "rpg",
             // pdf
             "pdf" };
 

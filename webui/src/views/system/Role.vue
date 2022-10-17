@@ -69,7 +69,7 @@ export default defineComponent({
         { field: 'roleName', title: '角色名称' },
         { field: 'roleKey', title: '权限字符', showOverflow: true, showHeaderOverflow: true },
         { field: 'roleSort', title: '显示顺序', showOverflow: true },
-        { status: 'status', title: '状态', showOverflow: true },
+        { field: 'status', title: '状态', showOverflow: true },
         { field: 'createTime', title: '创建时间', showOverflow: true },
         { field: 'operation', title: '操作', showOverflow: true, slots: { default: 'operation' }}
       ],
