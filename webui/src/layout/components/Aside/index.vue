@@ -71,6 +71,10 @@ const fullRoutes = computed(() => store.state.permission.routes)
   border-right: 0;
 }
 
+.aside-div::-webkit-scrollbar {
+  display: none;
+}
+
 .aside-div :deep(.el-sub-menu .el-menu-item) {
   background: #001b35;
   overflow: hidden;
