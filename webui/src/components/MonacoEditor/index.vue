@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import { defineComponent, nextTick, ref, watch } from 'vue'
+import { defineComponent, nextTick, watch } from 'vue'
 import * as monaco from 'monaco-editor'
 import * as sqlLanguage from 'monaco-editor/esm/vs/basic-languages/sql/sql'
 const { keywords } = sqlLanguage.language
@@ -26,8 +26,7 @@ export default defineComponent({
   },
   emits: ['change'],
   setup(props, context) {
-    const editor = ref(null)
-    const currentCodeText = ref('')
+    let editor = null
 
     const registerCompletion = () => {
       monaco.languages.registerCompletionItemProvider('sql', {
@@ -70,7 +69,7 @@ export default defineComponent({
 
     const initEditor = () => {
       // 初始化编辑器，确保dom已经渲染
-      editor.value = monaco.editor.create(document.getElementById('codeEditBox'), {
+      editor = monaco.editor.create(document.getElementById('codeEditBox'), {
         value: props.codeText, // 编辑器初始显示文字
         language: props.type, // 此处使用的python，其他语言支持自行查阅demo
         theme: 'vs', // 官方自带三种主题vs, hc-black, or vs-dark
@@ -86,23 +85,20 @@ export default defineComponent({
         quickSuggestionsDelay: 100 // 代码提示延时
       })
       // 监听值的变化
-      editor.value.onDidChangeModelContent(() => {
-        context.emit('change', monaco.editor.getModels()[0].getValue())
+      editor.onDidChangeModelContent(() => {
+        context.emit('change', editor.getValue())
       })
     }
 
     watch(props, (val) => {
-      monaco.editor.getModels()[0].setValue(val.codeText)
-      currentCodeText.value = val.codeText
+      editor.setValue(val.codeText)
     })
 
     nextTick(() => {
       registerCompletion()
       initEditor()
     })
-    return {
-      editor
-    }
+    return {}
   }
 })
 </script>
