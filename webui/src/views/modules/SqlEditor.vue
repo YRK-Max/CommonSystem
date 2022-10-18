@@ -55,7 +55,7 @@
             </div>
         </el-card>
     </div>
-    <div class="h-full flex-1">
+    <div class="h-full" style="width: calc(100% - 306px)">
         <div class="mb-2 flex">
           <el-button
             v-if="!isEdit && !isAdd"
@@ -70,7 +70,7 @@
             </template>
             执行
           </el-button>
-          <el-input v-if="isAdd" class="ml-2 w-50" size="small" placeholder="sql_name"></el-input>
+          <el-input v-if="isAdd" v-model="editForm.sql_name" class="ml-2 w-50" size="small" placeholder="sql_name"></el-input>
           <el-button v-if="isEdit || isAdd" class="ml-2" size="small" @click="handleSaveSql">
             <template #icon>
               <YIcon icon="yiconbaocun" :size="14"></YIcon>
@@ -119,8 +119,11 @@
     v-model="dialogVisible"
     title="参数列表"
     :width="380"
+    :show-close="false"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
   >
-    <div class="h-80">
+    <div class="h-80 overflow-auto">
       <el-form :model="paramsForm" label-width="80px" label-position="left">
         <el-form-item v-for="param in uniqueParams" :key="param" :label="param">
           <el-input v-model="paramsForm[param]" />
@@ -144,7 +147,7 @@
 import { defineComponent, reactive, ref, watch, nextTick } from 'vue'
 import MonacoEditor from '@/components/MonacoEditor/index.vue'
 import QuerySelect from '@/components/QuerySelect/index.vue'
-import { executeSQL, updateSql } from '@/api/server'
+import { executeSQL, insertSql, updateSql } from '@/api/server'
 import YIcon from '@/components/YIcon.vue'
 import DataTable from '@/components/DataTable.vue'
 import { ElMessage } from 'element-plus'
@@ -225,6 +228,11 @@ export default defineComponent({
           tableConfig.loading = false
         }
         queryUseTime.value = ((new Date()) - startTime) / 1000
+      }).catch(err => {
+        tableConfig.columns = []
+        tableConfig.datasource = []
+        tableConfig.loading = false
+        console.log(err)
       })
     }
 
@@ -238,22 +246,36 @@ export default defineComponent({
     }
 
     const handleSaveSql = () => {
-      updateSql(editForm).then(res => {
-        if (res && res['code'] === 200) {
-          ElMessage.success(res['msg'])
-          isEdit.value = false
-        }
-      })
+      if (isAdd) {
+        insertSql(editForm).then(res => {
+          if (res && res['code'] === 200) {
+            ElMessage.success(res['msg'])
+            isAdd.value = false
+            isEdit.value = false
+            initSqlList()
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+      } else {
+        updateSql(editForm).then(res => {
+          if (res && res['code'] === 200) {
+            ElMessage.success(res['msg'])
+            isEdit.value = false
+            initSqlList()
+          }
+        }).catch(err => {
+          console.log(err)
+        })
+      }
     }
 
     const handleAddSql = () => {
       isAdd.value = true
-      currentSQL.sql_name = ''
-      currentSQL.sql_str = ''
-      currentSQL.belong = ''
-      currentSQL.description = ''
-      editForm.belong = ''
-      editForm.description = ''
+      currentSQL.sql_name = editForm.sql_name = ''
+      currentSQL.sql_str = editForm.sql_str = ''
+      currentSQL.belong = editForm.belong = ''
+      currentSQL.description = editForm.description = ''
     }
 
     const initSqlList = () => {
