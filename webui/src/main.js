@@ -21,10 +21,14 @@ import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
 
+// vue-grid-layout
+import VueGridLayout from 'vue-grid-layout'
+
 const app = createApp(App)
 app.use(VueI18n)
 app.use(ElementPlus)
 app.use(router)
 app.use(store)
 app.use(VXETable)
+app.use(VueGridLayout)
 app.mount('#app')

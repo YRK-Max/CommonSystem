@@ -6,6 +6,41 @@
   "description": "通用图标库",
   "glyphs": [
     {
+      "icon_id": "19113298",
+      "name": "替换NULL值",
+      "font_class": "tihuanNULLzhi",
+      "unicode": "e756",
+      "unicode_decimal": 59222
+    },
+    {
+      "icon_id": "13606825",
+      "name": "light-component-control-doublecondition",
+      "font_class": "light-component-control-doublecondition",
+      "unicode": "e728",
+      "unicode_decimal": 59176
+    },
+    {
+      "icon_id": "837249",
+      "name": "table",
+      "font_class": "table",
+      "unicode": "e823",
+      "unicode_decimal": 59427
+    },
+    {
+      "icon_id": "15838441",
+      "name": "chart-bar",
+      "font_class": "chart-bar",
+      "unicode": "e668",
+      "unicode_decimal": 58984
+    },
+    {
+      "icon_id": "11488027",
+      "name": "customization",
+      "font_class": "customization",
+      "unicode": "e74b",
+      "unicode_decimal": 59211
+    },
+    {
       "icon_id": "6151278",
       "name": "cloud upload",
       "font_class": "cloudupload",
