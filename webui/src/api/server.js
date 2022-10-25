@@ -29,6 +29,11 @@ export const getRole = (roleId) => { return service.get('/system/role/' + roleId
 export const getRoleMenuTreeselect = (roleId) => { return service.get('/system/menu/roleMenuTreeselect/' + roleId) }
 export const delRole = (ids) => { return service.delete('/system/role/' + ids) }
 
+// modify
+export const updatePwd = (params) => { return service.put('/system/user/profile/updatePwd', params) }
+export const updateBase = (params) => { return service.put('/system/user/profile', params) }
+export const updateAvatar = (params) => { return service.put('/system/user/profile/avatar', params) }
+
 // dept 部门
 export const getDeptTreeList = () => { return service.get('/system/dept/treeselect') }
 
