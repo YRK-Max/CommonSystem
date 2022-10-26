@@ -26,14 +26,9 @@
                     :i="item.i"
                     :key="item.i"
                 >
-                    <div style="height: 20px;" class="flex justify-end">
-                        <div class="bg-red-500 flex justify-center items-center" style="height: 22px; width: 22px; border-radius: 6px;">
-                            <y-icon icon="yiconlajitong" color="white" :size="15" />
-                        </div>
-                    </div>
-                    <div style="height: calc(100% - 20px)" class="flex justify-center items-center">
-                        <y-icon :icon="getIconStrByType(item.type)" :size="30" />
-                    </div>
+                  <el-card class="h-full w-full" body-style="height: 100%">
+                    <component :is="getComponentID(item.type)"></component>
+                  </el-card>
                 </grid-item>
             </grid-layout>
         </div>
@@ -46,6 +41,10 @@
 import { defineComponent } from 'vue'
 import { GridLayout, GridItem } from 'vue-grid-layout'
 import YIcon from '@/components/YIcon.vue'
+import LineChart from '@/components/charts/LineChart.vue'
+import DataTable from '@/components/DataTable.vue'
+import Empty from '@/components/Empty.vue'
+
 export default defineComponent({
   components: {
     GridLayout,
@@ -54,11 +53,43 @@ export default defineComponent({
   },
   setup() {
     const layout = [
-      { 'x': 0, 'y': 0, 'w': 6, 'h': 11, 'i': '0', 'moved': false, 'type': 'chart' },
-      { 'x': 2, 'y': 11, 'w': 2, 'h': 4, 'i': '1', 'moved': false },
-      { 'x': 4, 'y': 11, 'w': 2, 'h': 5, 'i': '2', 'moved': false },
-      { 'x': 6, 'y': 0, 'w': 6, 'h': 11, 'i': '3', 'moved': false, 'type': 'chart' }
+      {
+        'x': 0,
+        'y': 3,
+        'w': 6,
+        'h': 11,
+        'i': '0',
+        'moved': false,
+        'type': 'chart'
+      },
+      {
+        'x': 0,
+        'y': 0,
+        'w': 12,
+        'h': 3,
+        'i': '1',
+        'moved': false
+      },
+      {
+        'x': 0,
+        'y': 14,
+        'w': 12,
+        'h': 10,
+        'i': '2',
+        'moved': false,
+        'type': 'table'
+      },
+      {
+        'x': 6,
+        'y': 3,
+        'w': 6,
+        'h': 11,
+        'i': '3',
+        'moved': false,
+        'type': 'chart'
+      }
     ]
+    const componentId = LineChart
 
     const handlePrintData = () => {
       console.log(layout)
@@ -73,18 +104,28 @@ export default defineComponent({
       }
     }
 
+    const getComponentID = (type) => {
+      switch (type) {
+        case 'chart': return LineChart
+        case 'table': return DataTable
+        default: return Empty
+      }
+    }
+
     return {
       layout,
+      componentId,
       handlePrintData,
-      getIconStrByType
+      getIconStrByType,
+      getComponentID
     }
   }
 })
 </script>
 <style lang="scss" scoped>
 .vue-grid-item:not(.vue-grid-placeholder) {
-    background: rgb(238, 238, 238);
-    border: 1px solid black;
+    border: 1px solid rgb(121, 121, 121);
+    border-radius: 3px;
 }
 .vue-grid-item .resizing {
     opacity: 0.9;
